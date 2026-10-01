@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Instagram Pro</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Arial,sans-serif;background:#f2f2f2;color:#111}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:520px;margin:auto;min-height:100vh;background:#fff;padding-bottom:72px}
+header{position:sticky;top:0;z-index:20;height:64px;background:#fff;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;justify-content:space-between;padding:0 15px}
+.logo{font-size:25px;font-weight:800}
+.top-icons{display:flex;gap:8px;align-items:center}
+.iconBtn{border:0;background:none;font-size:23px;padding:7px}
+.page{display:none}.page.active{display:block}
+.searchBox{padding:12px;background:#fff}
+.searchBox input,.section>input{width:100%;padding:13px 16px;border:1px solid #ddd;border-radius:14px;background:#f4f4f4;outline:none}
+.stories{display:flex;gap:16px;padding:14px 12px;border-bottom:1px solid #eee;overflow-x:auto}
+.story{min-width:64px;text-align:center;font-size:11px}.story button{border:0;background:none;padding:0}
+.avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:#fff;font-weight:800;margin:0 auto 7px;border:3px solid #fff;outline:2px solid #e1306c}
+.post{border-bottom:1px solid #ddd;background:#fff}
+.postHead{display:flex;align-items:center;gap:10px;padding:12px}
+.mini{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);display:grid;place-items:center;color:#fff;font-weight:800}
+.postMedia{width:100%;max-height:620px;background:#eee;display:block;object-fit:cover}
+.placeholderMedia{height:330px;display:grid;place-items:center;font-size:72px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)}
+.actions{display:flex;gap:18px;padding:10px 12px;font-size:25px}.actionBtn{border:0;background:none;padding:0}.actionBtn.liked{color:#e31b23}
+.caption{padding:0 12px 14px;line-height:1.45}.muted{color:#777;font-size:13px}
+.commentBox{display:flex;gap:7px;padding:0 12px 12px}.commentBox input{flex:1;border:1px solid #ddd;border-radius:18px;padding:9px 12px}
+.commentBox button,.primary{border:0;background:#111;color:#fff;border-radius:18px;padding:9px 14px}.comments{padding:0 12px 10px}.comment{font-size:13px;margin:5px 0}
+
+.notificationsBtn{position:relative}.notifBadge{position:absolute;top:1px;right:0;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#ed1c24;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:800}.notifList{display:flex;flex-direction:column;gap:8px}.notifItem{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid #e5e5e5;border-radius:16px;background:#fff}.notifItem.unread{background:#f5f8ff;border-color:#d9e5ff}.notifIcon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#f0f0f0;font-size:20px;flex:0 0 42px}.notifText{flex:1}.notifText b{font-weight:800}.notifTime{font-size:11px;color:#777;margin-top:4px}.notifActions{display:flex;gap:8px;margin:12px 0}.notifFilter{border:1px solid #ddd;background:#fff;border-radius:18px;padding:8px 12px}.dark .notifItem{background:#181818;border-color:#333}.dark .notifItem.unread{background:#202736;border-color:#33456b}.dark .notifFilter{background:#222;color:#eee;border-color:#444}
+.bottomNav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);height:66px;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:space-around;align-items:center;z-index:30;padding-bottom:env(safe-area-inset-bottom)}
+.bottomNav button{border:0;background:none;font-size:22px;padding:4px 9px}.bottomNav small{display:block;font-size:9px}
+.section{padding:18px 16px}.card{border:1px solid #ddd;border-radius:16px;padding:15px;margin-bottom:12px}
+.profileStats{display:flex;gap:0;margin:18px 0;border-top:1px solid #eee;border-bottom:1px solid #eee}.profileStat{flex:1;border:0;background:none;padding:14px 4px;text-align:center}.profileStat b{display:block;font-size:18px}.profileStat span{display:block;font-size:12px;color:#777;margin-top:3px}.followList{display:flex;flex-direction:column;gap:8px}.followCard{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #ddd;border-radius:14px;background:#fff}.followCard .mini{flex:0 0 42px;width:42px;height:42px}.followCardInfo{flex:1}.followCard button{border:0;border-radius:10px;padding:8px 12px;background:#111;color:#fff}.followCard button.following{background:#eee;color:#111}.dark .profileStats{border-color:#333}.dark .followCard{background:#222;border-color:#444}.dark .followCard button.following{background:#333;color:#eee}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}.gridItem{aspect-ratio:1;background:#eee;display:grid;place-items:center;overflow:hidden}.gridItem img,.gridItem video{width:100%;height:100%;object-fit:cover}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:50;align-items:flex-end}.modal.open{display:flex}
+.sheet{background:#fff;width:min(520px,100%);margin:auto;padding:18px;border-radius:22px 22px 0 0;max-height:92vh;overflow:auto}
+.sheet h2{margin-top:0}.sheet input,.sheet textarea,.sheet select{width:100%;padding:12px;border:1px solid #ccc;border-radius:12px;margin:7px 0}
+.preview{width:100%;max-height:300px;object-fit:contain;border-radius:14px;background:#eee;margin-top:8px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #eee}
+.row span small{display:block;margin-top:4px}.settingBtn{border:0;background:none;width:100%;text-align:left;padding:0}
+.toggle{width:50px;height:28px;border:0;border-radius:20px;background:#bbb;position:relative}.toggle:after{content:'';position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.toggle.on{background:#111}.toggle.on:after{left:25px}
+.toast{position:fixed;left:50%;bottom:82px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:20px;z-index:100;display:none}
+.empty{text-align:center;padding:35px;color:#777}
+.reel{position:relative;background:#000;color:#fff;margin-bottom:8px;min-height:650px;overflow:hidden}
+.reel video,.reel img{width:100%;height:650px;object-fit:cover;display:block}.reelShade{position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(0,0,0,.8));pointer-events:none}
+.reelInfo{position:absolute;left:14px;right:78px;bottom:18px;z-index:2}.reelInfo h3{margin:0 0 7px}.reelInfo p{margin:0;line-height:1.35}
+.reelActions{position:absolute;right:10px;bottom:25px;z-index:3;display:flex;flex-direction:column;gap:18px;align-items:center}.reelActions button{border:0;background:rgba(0,0,0,.35);color:#fff;border-radius:50%;width:48px;height:48px;font-size:22px}.reelActions small{font-size:10px;margin-top:-13px}.reelActions button.saved,.reelActions button.reposted{background:rgba(255,255,255,.2)}
+.chatList{padding:0 16px}.chatItem{display:flex;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid #eee}.chatItem button{border:0;background:none;text-align:left;flex:1}
+.chatWindow{display:flex;flex-direction:column;height:calc(100vh - 136px);min-height:480px}.chatHeader{padding:12px 16px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px}.chatMessages{flex:1;overflow:auto;padding:14px;background:#f5f5f5}.bubbleRow{display:flex;margin:7px 0}.bubbleRow.mine{justify-content:flex-end}.bubble{max-width:78%;padding:9px 12px;border-radius:17px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.08);position:relative}.mine .bubble{background:#111;color:#fff}.bubbleMeta{font-size:9px;opacity:.65;margin-top:4px}.bubbleMenu{font-size:10px;margin-left:5px;border:0;background:none;color:inherit}
+.chatComposer{display:flex;gap:6px;padding:10px;border-top:1px solid #ddd;background:#fff;align-items:center}.chatComposer input{flex:1;padding:11px;border:1px solid #ccc;border-radius:20px;min-width:0}.chatComposer button{border:0;border-radius:20px;background:#111;color:#fff;padding:0 14px;height:40px}.chatComposer .attachBtn{width:40px;padding:0;background:#eee;color:#111;font-size:18px}.messageMedia{max-width:230px;max-height:260px;border-radius:12px;display:block;margin-bottom:5px}.voiceMsg{display:flex;align-items:center;gap:8px}.reactionRow{margin-top:4px}.reactionBtn{border:0;background:transparent;padding:2px 5px;font-size:14px}.reactionCount{font-size:11px;opacity:.75}
+.filter-warm{filter:saturate(1.2) sepia(.15)}.filter-cool{filter:saturate(1.05) hue-rotate(12deg)}.filter-vintage{filter:sepia(.35) contrast(.95)}.filter-bw{filter:grayscale(1)}
+.dark body{background:#111;color:#eee}.dark .app,.dark header,.dark .bottomNav,.dark .post,.dark .searchBox,.dark .card,.dark .sheet,.dark .chatHeader,.dark .chatComposer{background:#181818;color:#eee}
+.privateMsg{border:0;border-radius:14px;padding:10px 12px;background:rgba(0,0,0,.08);font-weight:700;cursor:pointer;color:inherit}.mine .privateMsg{background:rgba(255,255,255,.14);color:#fff}.privateExpired{opacity:.65;font-style:italic}.chatComposer select{border:1px solid #ddd;border-radius:10px;padding:8px;background:#fff;font-size:12px}.dark .chatComposer select{background:#222;color:#eee;border-color:#444}
+.dark .searchBox input,.dark input,.dark textarea,.dark select{background:#222;color:#eee;border-color:#444}.dark .row,.dark .post,.dark .chatItem{border-color:#333}.dark .bottomNav{border-color:#333}.dark .muted{color:#aaa}.dark .commentBox input,.dark .chatComposer input{background:#222;color:#fff;border-color:#444}.dark .chatMessages{background:#111}.dark .bubble{background:#222;color:#eee}
+
+.storyModal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:60;display:none;align-items:center;justify-content:center;padding:14px}.storyModal.show{display:flex}.storySheet{width:min(520px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:22px;padding:16px}.storyPreview{height:430px;border-radius:18px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;margin:10px 0;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:#fff}.storyPreview img,.storyPreview video{width:100%;height:100%;object-fit:cover}.storyTextOverlay{position:absolute;left:20px;right:20px;bottom:25px;font-size:24px;font-weight:700;text-align:center;text-shadow:0 2px 8px #000}.storyMention{position:absolute;top:20px;left:20px;background:rgba(0,0,0,.45);padding:7px 10px;border-radius:12px}.storyTools{display:flex;gap:7px;overflow-x:auto;padding:4px 0}.storyTools button{white-space:nowrap;border:1px solid #ddd;background:#fff;border-radius:18px;padding:8px 11px}.storyReply{display:flex;gap:7px;margin-top:10px}.storyReply input{flex:1}.storyView{position:fixed;inset:0;background:#000;z-index:70;display:none;color:#fff;padding:18px}.storyView.show{display:flex;flex-direction:column}.storyViewContent{flex:1;display:flex;align-items:center;justify-content:center;text-align:center}.storyViewContent img,.storyViewContent video{max-width:100%;max-height:75vh}.storyReplyList{max-height:100px;overflow:auto;font-size:13px}.storyMusic{background:#f5f5f5;padding:8px;border-radius:12px;margin-top:7px}
+
+.searchResult{display:block;width:100%;text-align:left;cursor:pointer;border:1px solid #ddd;background:#fff}.searchResult:hover{transform:translateY(-1px)}
+.messageRequests{margin:0 12px 12px}.requestBar{display:flex;justify-content:space-between;align-items:center;background:#f6f6f6;border-radius:14px;padding:12px;margin-bottom:8px}.requestBadge{background:#e11;color:#fff;border-radius:999px;padding:2px 7px;font-size:11px}.requestCard{display:flex;gap:10px;align-items:center;border:1px solid #ddd;border-radius:14px;padding:11px;margin:7px 0;background:#fff}.requestActions{margin-left:auto;display:flex;gap:5px}.requestActions button{border:0;border-radius:10px;padding:7px 9px}.acceptReq{background:#111;color:#fff}.declineReq{background:#eee}.dark .requestBar,.dark .requestCard{background:#222;border-color:#444}
+/* Instagram Pro realistic UI refresh */
+:root{--ig-text:#111;--ig-muted:#737373;--ig-border:#dbdbdb;--ig-bg:#fafafa;--ig-blue:#0095f6}
+html,body{background:var(--ig-bg);color:var(--ig-text)}
+body{letter-spacing:-.01em}
+.app{max-width:520px;background:#fff;box-shadow:0 0 30px rgba(0,0,0,.05);padding-bottom:82px}
+header{height:62px;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--ig-border);padding:0 14px}
+.logo{font-family:Arial,sans-serif;font-size:24px;letter-spacing:-1px}
+.logo:after{content:' Pro';font-size:12px;font-weight:700;letter-spacing:0;color:#8e8e8e;margin-left:3px}
+.top-icons{gap:2px}.iconBtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:21px;transition:background .15s,transform .15s}.iconBtn:active{transform:scale(.92);background:#f2f2f2}
+.searchBox{padding:10px 12px 8px}.searchBox input{height:38px;border:0;border-radius:10px;background:#efefef;font-size:14px;padding:0 14px}
+.stories{gap:14px;padding:12px 12px 13px;background:#fff;border-bottom:1px solid #efefef}.story{min-width:66px;font-size:11px;color:#262626}.story button{color:inherit}.avatar{width:62px;height:62px;border:2px solid #fff;outline:2px solid #d62976;box-shadow:0 0 0 3px #f5f5f5;font-size:14px}
+.post{border-bottom:8px solid #f5f5f5}.postHead{padding:10px 12px}.postHead .mini{width:34px;height:34px}.postMedia{max-height:none;aspect-ratio:1/1;background:#f1f1f1}.placeholderMedia{height:auto;aspect-ratio:1/1;font-size:64px}.actions{gap:16px;padding:9px 12px 6px}.actionBtn{font-size:25px;transition:transform .12s}.actionBtn:active{transform:scale(.84)}.caption{font-size:14px;padding:0 12px 10px}.commentBox{padding:0 12px 12px}.commentBox input{border:0;background:#f6f6f6}.commentBox button{background:transparent;color:#0095f6;font-weight:700}
+.bottomNav{height:60px;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-top:1px solid #ddd;box-shadow:0 -4px 18px rgba(0,0,0,.04)}.bottomNav button{font-size:21px;min-width:48px;color:#111;opacity:.9}.bottomNav button small{font-size:9px;color:#737373;margin-top:2px}.bottomNav button:active{transform:scale(.92)}
+.section{padding:16px 14px}.card,.settingGroup{border:1px solid var(--ig-border);border-radius:14px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.02)}
+.profileStats{margin:18px 0;border-color:#eee}.profileStat b{font-size:17px}.profileStat span{font-size:11px}
+.primary{background:#0095f6;border-radius:9px;padding:9px 16px;font-weight:700}.primary:active{transform:scale(.97)}
+.grid img,.grid .placeholderMedia{border-radius:2px}
+.reel{min-height:calc(100vh - 124px);margin-bottom:2px;border-radius:0;background:#111}.reelInfo{bottom:22px}.reelActions{bottom:24px}.reelActions button{background:rgba(20,20,20,.5);backdrop-filter:blur(8px)}
+.chatMessages{background:#f7f7f7}.bubble{border-radius:18px}.mine .bubble{background:#0095f6}.chatComposer button{background:#0095f6}
+.row{padding:15px 0}.setting{border-radius:10px!important}.toast{bottom:76px;box-shadow:0 8px 25px rgba(0,0,0,.22)}
+.notifItem{border-color:#eee}.notifItem.unread{background:#f1f7ff;border-color:#d8eaff}
+.badgeVerified{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#0095f6;color:#fff;font-size:10px;font-weight:900;margin-left:3px;vertical-align:middle}
+.liveDot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:4px}
+@media(max-width:380px){.top-icons .iconBtn{width:34px}.top-icons{gap:0}.stories{gap:10px}.story{min-width:62px}}
+.dark .app{box-shadow:none}.dark header,.dark .bottomNav{background:rgba(24,24,24,.96)}.dark .searchBox input{background:#262626}.dark .post{border-bottom-color:#101010}.dark .bottomNav button{color:#fff}.dark .bottomNav button small{color:#aaa}.dark .primary{background:#0095f6}
+
+/* Instagram Pro camera UI - phone-first, camera-app style */
+.creatorOverlay{position:fixed;inset:0;width:100%;height:100dvh;background:#000;color:#fff;z-index:200;display:none;flex-direction:column;overflow:hidden}
+.creatorOverlay.show{display:flex}
+.creatorStage{position:relative;flex:1 1 auto;min-height:0;background:#000;overflow:hidden;border-radius:0 0 22px 22px}
+.creatorStage video,.creatorStage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.creatorTop{position:absolute;top:0;left:0;right:0;height:76px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:12px 18px;z-index:8;background:linear-gradient(rgba(0,0,0,.38),transparent)}
+.creatorTopLeft{text-align:left}.creatorTopCenter{text-align:center}.creatorTopRight{text-align:right}
+.creatorIcon{border:0;background:transparent;color:#fff;font-size:38px;line-height:1;width:48px;height:48px;text-shadow:0 2px 8px #000;padding:0}
+.creatorGear{font-size:34px}.creatorClose{font-size:46px;font-weight:300}.creatorMute{font-size:30px}
+.creatorSide{position:absolute;left:28px;top:50%;transform:translateY(-38%);display:flex;flex-direction:column;gap:26px;z-index:8}
+.creatorTool{border:0;background:transparent;color:#fff;text-align:left;font-size:16px;font-weight:600;display:flex;align-items:center;gap:13px;text-shadow:0 2px 8px #000;padding:0}
+.creatorTool .toolIcon{font-size:31px;width:42px;text-align:center}.creatorArrow{font-size:34px;margin-left:5px}
+.creatorCaption{position:absolute;left:18px;right:18px;bottom:20px;z-index:8;display:none}.creatorCaption input{width:100%;box-sizing:border-box;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:14px;padding:11px 13px;outline:none}
+.creatorPublish{display:none;position:absolute;right:18px;bottom:22px;z-index:10;border:0;background:#0095f6;color:#fff;font-weight:700;padding:12px 18px;border-radius:22px}
+.creatorPublish.show{display:block}
+.creatorToast{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);background:rgba(0,0,0,.72);padding:9px 14px;border-radius:18px;font-size:13px;display:none;z-index:20;white-space:nowrap}
+.creatorBottom{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.92) 18%,#000 42%);padding:26px 18px max(16px,env(safe-area-inset-bottom));z-index:50;box-sizing:border-box;width:100%;display:block;visibility:visible;overflow:visible}
+.creatorControls{display:flex;align-items:center;justify-content:space-between;max-width:430px;margin:auto;height:88px;position:relative;z-index:55}
+.creatorGallery{width:58px;height:58px;border:2px solid #fff;border-radius:10px;overflow:hidden;background:#222;display:flex;align-items:center;justify-content:center;flex:none}
+.creatorGallery img{width:100%;height:100%;object-fit:cover}.creatorGallery span{font-size:28px}
+.creatorShutter{width:82px;height:82px;border:4px solid #fff;border-radius:50%;background:#f5f5f5;box-shadow:0 0 0 2px #111 inset;flex:none}
+.creatorShutter.recording{background:#e53935;border-radius:24px;transform:scale(.72)}
+.creatorSwitch{border:0;background:transparent;color:#fff;font-size:34px;width:58px;height:58px;flex:none}
+.creatorModes{display:flex!important;justify-content:center;align-items:center;gap:22px;margin:4px auto 0;color:#fff;font-size:15px;letter-spacing:1.5px;font-weight:700;min-height:42px;height:42px;position:relative;z-index:60;visibility:visible!important;opacity:1!important;white-space:nowrap}
+.creatorMode{border:0;background:transparent;color:#fff!important;font-size:15px;letter-spacing:1.5px;font-weight:700;padding:7px 4px;min-width:48px;opacity:1!important;display:block!important;visibility:visible!important;text-shadow:0 1px 5px #000}.creatorMode.active{color:#fff!important;text-shadow:0 0 8px rgba(255,255,255,.65);font-weight:900}
+.creatorHint{text-align:center;font-size:10px;color:#aaa;min-height:15px;height:15px;margin-top:0;visibility:visible}
+@media(max-width:430px){.creatorSide{left:22px;gap:25px}.creatorTool{font-size:15px}.creatorModes{gap:12px}.creatorShutter{width:80px;height:80px}.creatorControls{height:86px}.creatorBottom{padding-left:10px;padding-right:10px;padding-top:22px}}
+@media(max-height:650px){.creatorBottom{padding-top:8px}.creatorControls{height:72px}.creatorShutter{width:66px;height:66px}.creatorModes{height:36px;min-height:36px;margin-top:0}.creatorMode{font-size:13px}.creatorHint{display:none}}
+
+
+/* V5: prominent Create button */
+.creatorCreateButton{position:absolute;left:20px;top:44%;transform:translateY(-50%);z-index:90;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.58);color:#fff;border-radius:18px;padding:12px 18px;font-size:17px;font-weight:800;display:flex;align-items:center;gap:9px;box-shadow:0 3px 14px rgba(0,0,0,.35);backdrop-filter:blur(6px)}
+.creatorCreateButton:active{transform:translateY(-50%) scale(.96)}
+.creatorCreateButton .plus{font-size:24px;line-height:1}
+@media(max-width:430px){.creatorCreateButton{left:16px;font-size:16px;padding:11px 15px}}
+.creatorCreateButton{display:none!important}.creatorModes{position:relative!important;z-index:200!important}.creatorMode{cursor:pointer!important;}
+
+.profileCreatorHub{border:1px solid #e6e6e6;border-radius:16px;padding:14px;margin:0 0 18px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.profileCreatorGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.profileCreateCard{border:1px solid #ddd;border-radius:14px;background:#fafafa;padding:12px 5px 10px;min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#111}
+.profileCreateCard span{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#111;color:#fff;font-size:18px;font-weight:800}
+.profileCreateCard b{font-size:13px}.profileCreateCard small{font-size:9px;color:#777;text-align:center}
+.profileCreateCard:active{transform:scale(.96)}
+.profileCreateCard.live span{background:#e53935}.profileCreateCard.reel span{background:#7c3aed}.profileCreateCard.story span{background:#e1306c}.profileCreateCard.post span{background:#0095f6}
+.dark .profileCreatorHub{background:#181818;border-color:#333}.dark .profileCreateCard{background:#222;border-color:#444;color:#fff}.dark .profileCreateCard small{color:#aaa}
+@media(max-width:380px){.profileCreatorGrid{gap:5px}.profileCreateCard{padding-left:2px;padding-right:2px}.profileCreateCard b{font-size:12px}}
+</style>
+
+<!-- Supabase backend foundation -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+window.INSTAGRAM_PRO_BACKEND = {
+  url: 'https://jwxenahmdznfdcyyyfwk.supabase.co',
+  publishableKey: 'sb_publishable_MXu5WeDwf_dZx7QEfSG7nw_K0Zu1TYA'
+};
+window.supabaseClient = null;
+function initBackend(){
+  const c=window.INSTAGRAM_PRO_BACKEND;
+  if(!window.supabase || !c || c.url.includes('YOUR_') || c.publishableKey.includes('YOUR_')) return false;
+  window.supabaseClient=window.supabase.createClient(c.url,c.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  return true;
+}
+async function signUpOnline(email,password,username,displayName=''){
+  if(!initBackend()) throw new Error('Backend is not configured yet.');
+  return await window.supabaseClient.auth.signUp({email,password,options:{data:{username,display_name:displayName}}});
+}
+async function signInOnline(email,password){
+  if(!initBackend()) throw new Error('Backend is not configured yet.');
+  return await window.supabaseClient.auth.signInWithPassword({email,password});
+}
+async function signOutOnline(){
+  if(window.supabaseClient) return await window.supabaseClient.auth.signOut();
+}
+async function getOnlineSession(){
+  if(!initBackend()) return null;
+  const {data}=await window.supabaseClient.auth.getSession();
+  return data.session;
+}
+async function loadOnlineProfile(){
+  const session=await getOnlineSession(); if(!session)return null;
+  const {data,error}=await window.supabaseClient.from('profiles').select('*').eq('id',session.user.id).single();
+  if(error) throw error;
+  return data;
+}
+initBackend();
+</script>
+<!-- Supabase profile backend -->
+<script>
+window.INSTAGRAM_PRO_PROFILE_TABLE='profiles';
+async function upsertCloudProfile(){
+  try{
+    const session=await getOnlineSession();
+    if(!session||!window.supabaseClient)return false;
+    const prof=db?.profile||{};
+    const row={
+      id:session.user.id,
+      username:String(prof.username||session.user.user_metadata?.username||'samuel').replace(/^@/,''),
+      display_name:String(prof.name||session.user.user_metadata?.display_name||'Samuel'),
+      bio:String(prof.bio||''),
+      avatar_url:prof.avatar_url||null,
+      followers:Array.isArray(prof.followers)?prof.followers:[],
+      following:Array.isArray(prof.following)?prof.following:[],
+      updated_at:new Date().toISOString()
+    };
+    const {error}=await window.supabaseClient.from(window.INSTAGRAM_PRO_PROFILE_TABLE).upsert(row,{onConflict:'id'});
+    if(error)throw error;
+    return true;
+  }catch(e){console.warn('Supabase profile save failed',e);return false}
+}
+async function loadCloudProfile(){
+  try{
+    const session=await getOnlineSession();
+    if(!session||!window.supabaseClient)return false;
+    const {data,error}=await window.supabaseClient.from(window.INSTAGRAM_PRO_PROFILE_TABLE).select('*').eq('id',session.user.id).maybeSingle();
+    if(error)throw error;
+    if(data){
+      db.profile=db.profile||{};
+      if(data.username)db.profile.username=data.username;
+      if(data.display_name)db.profile.name=data.display_name;
+      if(typeof data.bio==='string')db.profile.bio=data.bio;
+      if(data.avatar_url)db.profile.avatar_url=data.avatar_url;
+      if(Array.isArray(data.followers))db.profile.followers=data.followers;
+      if(Array.isArray(data.following))db.profile.following=data.following;
+      saveLocalOnly();
+      return true;
+    }
+    await upsertCloudProfile();
+    return false;
+  }catch(e){console.warn('Supabase profile load failed',e);return false}
+}
+</script>
+
+<!-- Real Supabase app-state backend -->
+<script>
+window.INSTAGRAM_PRO_CLOUD={table:'app_state',syncDelay:500};
+window.instagramCloud={
+ userId:null,ready:false,timer:null,loading:false,saving:false,pending:false,
+ async session(){
+  try{if(!window.supabaseClient)initBackend();const {data,error}=await window.supabaseClient.auth.getSession();if(error)throw error;this.userId=data?.session?.user?.id||null;return data?.session||null}catch(e){console.warn('Supabase session error',e);return null}
+ },
+ async load(){
+  const session=await this.session();if(!session||!window.supabaseClient)return false;this.loading=true;
+  try{
+   const {data,error}=await window.supabaseClient.from(window.INSTAGRAM_PRO_CLOUD.table).select('data,updated_at').eq('user_id',session.user.id).maybeSingle();
+   if(error)throw error;this.userId=session.user.id;
+   if(data?.data&&typeof data.data==='object'){
+    const merged=Object.assign(structuredClone(defaults),data.data);
+    merged.profile=Object.assign(structuredClone(defaults.profile),data.data.profile||{});
+    db=merged;
+   }else{await this.save(true)}
+   await loadCloudProfile();
+   saveLocalOnly();
+   if(typeof renderFeed==='function')renderFeed();if(typeof renderReels==='function')renderReels();if(typeof renderProfile==='function')renderProfile();if(typeof renderNotifications==='function')renderNotifications();if(typeof renderSettings==='function')renderSettings();if(typeof renderChats==='function')renderChats();if(typeof updateNotificationBadge==='function')updateNotificationBadge();
+   showToast('Synced with Supabase ☁️');
+   this.ready=true;return true;
+  }catch(e){console.warn('Supabase cloud load failed',e);showToast('Cloud sync failed — check app_state table and RLS');return false}finally{this.loading=false}
+ },
+ queue(){
+  if(!this.userId||this.loading){this.pending=true;return;}
+  this.pending=true;clearTimeout(this.timer);
+  this.timer=setTimeout(()=>this.save(),window.INSTAGRAM_PRO_CLOUD.syncDelay);
+ },
+ async save(force=false){
+  if(this.saving){this.pending=true;return false;}
+  if(!window.supabaseClient)return false;
+  const session=await this.session();if(!session)return false;
+  this.saving=true;this.pending=false;
+  try{
+   const payload={user_id:session.user.id,data:db,updated_at:new Date().toISOString()};
+   const {error}=await window.supabaseClient.from(window.INSTAGRAM_PRO_CLOUD.table).upsert(payload,{onConflict:'user_id'});
+   if(error)throw error;
+   await upsertCloudProfile();
+   this.userId=session.user.id;this.ready=true;return true;
+  }catch(e){console.warn('Supabase cloud save failed',e);this.pending=true;if(force)showToast('Cloud save failed — check app_state RLS');return false}
+  finally{this.saving=false;if(this.pending&&!this.loading){clearTimeout(this.timer);this.timer=setTimeout(()=>this.save(),window.INSTAGRAM_PRO_CLOUD.syncDelay)}}
+ }
+};
+async function syncCurrentUserFromSupabase(){if(!window.supabaseClient)initBackend();try{const {data:{session}}=await window.supabaseClient.auth.getSession();if(session){await window.instagramCloud.load();return session}}catch(e){console.warn(e)}return null}
+</script>
+
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="logo">Instagram Pro</div>
+  <div class="top-icons">
+    <button class="iconBtn" onclick="showPage('search')" aria-label="Search">⌕</button>
+    <button class="iconBtn" onclick="openSupabaseLogin()" aria-label="Login">🔐</button>
+    <button class="iconBtn notificationsBtn" onclick="showPage('notifications')" aria-label="Notifications">🔔<span id="notifBadge" class="notifBadge" style="display:none">0</span></button>
+    <button class="iconBtn" onclick="showPage('owner')" aria-label="Owner Dashboard">👑</button>
+  </div>
+</header>
+
+<main>
+<section id="home" class="page active">
+  <div class="searchBox"><input id="feedSearch" placeholder="🔍 Search Instagram Pro" oninput="renderFeed()"></div>
+  <div class="stories" id="stories"></div>
+  <div id="feed"></div>
+</section>
+
+<section id="notifications" class="page">
+  <div class="section"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">Notifications</h2><button class="primary" onclick="markAllNotificationsRead()">Mark all read</button></div>
+    <div class="notifActions"><button class="notifFilter" onclick="setNotifFilter('all')">All</button><button class="notifFilter" onclick="setNotifFilter('social')">Social</button><button class="notifFilter" onclick="setNotifFilter('messages')">Messages</button></div>
+    <div id="notificationsList" class="notifList"></div>
+  </div>
+</section>
+
+<section id="search" class="page">
+  <div class="section"><h2>Search</h2><input id="globalSearch" placeholder="Search users, captions..." oninput="renderSearch()"><div id="searchResults"></div></div>
+</section>
+
+<section id="reels" class="page">
+  <div class="section" style="padding-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">Reels</h2><button class="primary" onclick="openCreate('reel')">＋ Reel</button></div></div>
+  <div id="reelsFeed"></div>
+</section>
+
+<section id="messages" class="page">
+  <div id="chatListView">
+    <div class="section"><h2>Messages</h2><input id="messageSearch" placeholder="🔍 Search messages..." oninput="renderChats()"></div>
+    <div class="messageRequests"><button class="requestBar" style="width:100%;border:0" onclick="toggleMessageRequests()"><span>📩 Message Requests</span><span id="requestBadge" class="requestBadge">0</span></button><div id="messageRequestsPanel" style="display:none"></div></div>
+    <div class="chatList" id="chatList"></div>
+  </div>
+  <div id="chatWindowView" style="display:none">
+    <div class="chatWindow">
+      <div class="chatHeader"><button class="iconBtn" onclick="closeChat()">‹</button><div class="mini" id="chatAvatar">A</div><div><b id="chatName">Alex</b><div class="muted" id="chatStatus">Active now</div></div></div>
+      <div class="chatMessages" id="chatMessages"></div>
+      <input id="chatMediaInput" type="file" accept="image/*,video/*" hidden onchange="sendChatMedia(this)">
+      <div class="chatComposer">
+        <button class="attachBtn" onclick="document.getElementById('chatMediaInput').click()" title="Photo or video">＋</button>
+        <button class="attachBtn" onclick="toggleVoiceRecording()" id="voiceBtn" title="Voice message">🎤</button>
+        <select id="messageViewMode" title="Message privacy">
+          <option value="normal">Keep</option>
+          <option value="once">View once</option>
+          <option value="twice">View twice</option>
+        </select>
+        <input id="messageInput" placeholder="Message..." onkeydown="if(event.key==='Enter')sendMessage()">
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="create" class="page">
+  <div class="section">
+    <h2>Create</h2>
+    <div class="card"><h3>New Post</h3><textarea id="quickCaption" placeholder="Write a caption..."></textarea><input id="quickMedia" type="file" accept="image/*,video/*"><button class="primary" onclick="createFromQuick()">Publish Post</button></div>
+    <div class="card"><h3>Story</h3><button class="primary" onclick="openCreate('story')">＋ Add Story</button></div>
+    <div class="card"><h3>Reel</h3><p class="muted">Choose a video and publish it to your Reels feed.</p><button class="primary" onclick="openCreate('reel')">＋ Create Reel</button></div>
+  </div>
+</section>
+
+<section id="profile" class="page">
+  <div class="section">
+    <div style="display:flex;gap:16px;align-items:center"><div class="avatar" style="margin:0;width:78px;height:78px">S</div><div><h2 id="profileName" style="margin:0">Samuel</h2><p id="profileUsername" class="muted">@samuel</p></div></div>
+    <p id="profileBio">Welcome to my Instagram Pro profile 🚀</p>
+    <div style="display:flex;gap:8px;align-items:center;margin:10px 0 14px">
+      <button class="primary" onclick="editProfile()">Edit profile</button>
+      <button class="iconBtn" style="border:1px solid #ddd;border-radius:12px;padding:8px 12px" onclick="showPage('settings')" aria-label="Settings">⚙️</button>
+    </div>
+
+    <div class="profileCreatorHub">
+      <h3 style="margin:0 0 10px">Create</h3>
+      <div class="profileCreatorGrid">
+        <button class="profileCreateCard story" onclick="openCreate('story')"><span>＋</span><b>Story</b><small>Photo or video</small></button>
+        <button class="profileCreateCard post" onclick="openCreate('post')"><span>＋</span><b>Post</b><small>Photo or video</small></button>
+        <button class="profileCreateCard reel" onclick="openCreate('reel')"><span>▶</span><b>Reel</b><small>Short video</small></button>
+        <button class="profileCreateCard live" onclick="openCreate('live')"><span>●</span><b>Live</b><small>Go live</small></button>
+      </div>
+      <p class="muted" style="margin:9px 2px 0">Choose Story, Post, Reel or Live. The camera screen will open directly.</p>
+    </div>
+
+    <div class="profileStats"><button class="profileStat" onclick="showFollowList('followers')"><b id="profileFollowers">0</b><span>Followers</span></button><button class="profileStat" onclick="showFollowList('following')"><b id="profileFollowing">0</b><span>Following</span></button><button class="profileStat"><b id="profilePosts">0</b><span>Posts</span></button><button class="profileStat"><b id="profileLikes">0</b><span>Likes</span></button></div>
+    <div id="followListPanel" class="card" style="display:none"></div><h3>My posts</h3><div class="grid" id="profileGrid"></div>
+  </div>
+</section>
+
+<section id="owner" class="page">
+  <div class="section"><div style="display:flex;justify-content:space-between;align-items:center"><h2>👑 Owner Dashboard</h2><span class="muted">Admin control center</span></div>
+    <div id="ownerStats" class="grid2"></div>
+    <div class="settingGroup"><h3>📈 Platform overview</h3><div id="ownerOverview"></div></div>
+    <div class="settingGroup"><h3>👥 Users</h3><div id="ownerUsers"></div></div>
+    <div class="settingGroup"><h3>🛠️ Controls</h3><div class="row"><button class="primary" onclick="ownerAnnouncement()">📢 Announcement</button><button onclick="ownerToggleMaintenance()">🔧 Maintenance</button><button onclick="ownerResetDemo()">♻️ Reset demo data</button></div><div id="ownerMaintenance" class="muted"></div></div>
+  </div>
+</section>
+
+<section id="settings" class="page">
+  <div class="section"><h2>Settings</h2><input placeholder="🔎 Search settings..." oninput="filterSettings(this.value)">
+    <div id="settingsList">
+      <div class="card settingGroup"><h4>YOUR ACCOUNT</h4>
+        <button class="settingBtn" onclick="showDashboard()"><div class="row"><span>👤 <b>Account</b><small class="muted">Profile and personal information</small></span><span>›</span></div></button>
+        <button class="settingBtn" onclick="showDashboard()"><div class="row"><span>📊 <b>Dashboard & Earnings</b><small class="muted">Views, followers and KSh earnings</small></span><span>›</span></div></button>
+      </div>
+      <div class="card settingGroup"><h4>PRIVACY & SECURITY</h4>
+        <div class="row"><span>🔒 <b>Privacy</b><small class="muted">Who can see and interact with you</small></span><span>›</span></div>
+        <div class="row"><span>🛡️ <b>Security</b><small class="muted">Password and login protection</small></span><span>›</span></div>
+        <div class="row"><span>🚫 <b>Blocked & Restricted</b><small class="muted">Manage blocked accounts</small></span><span>›</span></div>
+      </div>
+      <div class="card settingGroup"><h4>INTERACTIONS</h4>
+        <button class="settingBtn" onclick="showPage('messages')"><div class="row"><span>💬 <b>Messages & Replies</b><small class="muted">Open your conversations</small></span><span>›</span></div></button>
+        <div class="row"><span>@ <b>Mentions & Tags</b><small class="muted">Control mentions and tags</small></span><span>›</span></div>
+        <div class="row"><span>🟢 <b>Activity Status</b><small class="muted">Show when you are active</small></span><button id="statusToggle" class="toggle on" onclick="toggleStatus()"></button></div>
+        <div class="row"><span>🌙 <b>Theme</b><small class="muted">Light or dark mode</small></span><select onchange="setTheme(this.value)" id="themeSelect"><option value="light">Light</option><option value="dark">Dark</option></select></div>
+      </div>
+      <div class="card settingGroup"><h4>ACCOUNT SECURITY</h4>
+        <button class="settingBtn" onclick="changePasswordDemo()"><div class="row"><span>🔑 <b>Change Password</b><small class="muted">Update your account password</small></span><span>›</span></div></button>
+        <button class="settingBtn" onclick="showLoginActivity()"><div class="row"><span>📱 <b>Login Activity</b><small class="muted">See devices signed in</small></span><span>›</span></div></button>
+        <div class="row"><span>🛡️ <b>Two-Factor Authentication</b><small class="muted">Extra login protection</small></span><button id="twoFactorToggle" class="toggle" onclick="toggleTwoFactor()"></button></div>
+        <button class="settingBtn" onclick="logoutAllDemo()"><div class="row"><span>🚪 <b>Log out of all devices</b><small class="muted">Sign out other sessions</small></span><span>›</span></div></button>
+      </div>
+      <div class="card settingGroup"><h4>PRIVACY</h4>
+        <div class="row"><span>🔒 <b>Private Account</b><small class="muted">Only approved followers can see your content</small></span><button id="privateToggle" class="toggle" onclick="togglePrivateAccount()"></button></div>
+        <button class="settingBtn" onclick="privacyChoices()"><div class="row"><span>💬 <b>Who can message you</b><small class="muted">Everyone, followers, or nobody</small></span><span>›</span></div></button>
+        <button class="settingBtn" onclick="commentChoices()"><div class="row"><span>💭 <b>Comments & replies</b><small class="muted">Choose who can interact</small></span><span>›</span></div></button>
+        <button class="settingBtn" onclick="tagMentionChoices()"><div class="row"><span>@️⃣ <b>Mentions & Tags</b><small class="muted">Control who can mention or tag you</small></span><span>›</span></div></button>
+        <div class="row"><span>👁️ <b>Read Receipts</b><small class="muted">Show when messages are read</small></span><button id="readReceiptToggle" class="toggle on" onclick="toggleReadReceipts()"></button></div>
+      </div>
+      <div class="card settingGroup"><h4>NOTIFICATIONS</h4>
+        <div class="row"><span>🔔 <b>Push Notifications</b><small class="muted">Allow app notifications</small></span><button id="pushToggle" class="toggle on" onclick="toggleSetting('push')"></button></div>
+        <div class="row"><span>❤️ <b>Likes & Comments</b></span><button id="likeNotifToggle" class="toggle on" onclick="toggleSetting('likes')"></button></div>
+        <div class="row"><span>👥 <b>Followers & Mentions</b></span><button id="socialNotifToggle" class="toggle on" onclick="toggleSetting('social')"></button></div>
+        <div class="row"><span>💌 <b>Messages & Requests</b></span><button id="messageNotifToggle" class="toggle on" onclick="toggleSetting('messages')"></button></div>
+      </div>
+      <div class="card settingGroup"><h4>CONTENT & APP</h4>
+        <button class="settingBtn" onclick="showContentPrefs()"><div class="row"><span>🚫 <b>Hidden Words</b><small class="muted">Filter unwanted comments and messages</small></span><span>›</span></div></button>
+        <button class="settingBtn" onclick="showMutedAccounts()"><div class="row"><span>🔇 <b>Muted Accounts</b><small class="muted">Manage accounts you muted</small></span><span>›</span></div></button>
+        <div class="row"><span>📶 <b>Data Saver</b><small class="muted">Reduce media data usage</small></span><button id="dataSaverToggle" class="toggle" onclick="toggleSetting('dataSaver')"></button></div>
+        <button class="settingBtn" onclick="downloadInfoDemo()"><div class="row"><span>📥 <b>Download Your Information</b><small class="muted">Prepare a copy of your app data</small></span><span>›</span></div></button>
+      </div>
+      <div class="card settingGroup"><h4>ACCOUNT MANAGEMENT</h4>
+        <button class="settingBtn" onclick="deactivateDemo()"><div class="row"><span>⏸️ <b>Deactivate Account</b><small class="muted">Temporarily hide your account</small></span><span>›</span></div></button>
+        <button class="settingBtn" onclick="deleteAccountDemo()"><div class="row"><span>🗑️ <b>Delete Account</b><small class="muted">Permanent deletion will require backend security</small></span><span>›</span></div></button>
+      </div>
+    </div>
+    <div id="dashboard" class="card" style="display:none"></div>
+  </div>
+</section>
+</main>
+
+<nav class="bottomNav">
+  <button onclick="showPage('home')">⌂<small>Home</small></button>
+  <button onclick="showPage('messages')">💬<small>Messages</small></button>
+  <button onclick="showPage('search')">🔍<small>Search</small></button>
+  <button onclick="showPage('reels')">▶<small>Reels</small></button>
+  <button onclick="showPage('profile')">◯<small>Profile</small></button>
+</nav>
+</div>
+
+<div id="createModal" class="creatorOverlay">
+  <div class="creatorStage" style="background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;color:#fff;box-sizing:border-box">
+    <button onclick="closeModal()" style="position:absolute;top:18px;right:18px;border:0;border-radius:50%;width:42px;height:42px;font-size:26px;background:#fff;color:#111">×</button>
+    <div id="creatorEmoji" style="font-size:64px;margin-bottom:12px">📸</div>
+    <h2 id="creatorTitle" style="margin:0 0 8px">Create Post</h2>
+    <p id="creatorHint" style="text-align:center;opacity:.8;margin:0 0 24px">Choose Camera or Gallery below.</p>
+    <div id="creatorMediaButtons" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:360px">
+      <button onclick="openNativeCreatorCamera()" style="padding:16px;border:0;border-radius:16px;font-weight:800;font-size:16px">📷 Camera</button>
+      <button onclick="openNativeCreatorGallery()" style="padding:16px;border:0;border-radius:16px;font-weight:800;font-size:16px">🖼️ Gallery</button>
+    </div>
+    <div id="liveCameraPanel" style="display:none;width:100%;max-width:420px;position:relative">
+      <video id="liveCameraVideo" autoplay muted playsinline style="width:100%;height:52vh;min-height:360px;object-fit:cover;border-radius:20px;background:#000"></video>
+      <div style="position:absolute;top:12px;left:12px;background:#e53935;color:#fff;padding:7px 11px;border-radius:16px;font-weight:800">● LIVE PREVIEW</div>
+      <div id="liveCameraStatus" style="text-align:center;margin:10px 0;opacity:.85">Requesting camera and microphone…</div>
+      <button id="startLiveBtn" onclick="startActualLive()" style="width:100%;padding:15px;border:0;border-radius:22px;background:#e53935;color:#fff;font-weight:900;font-size:16px">🔴 START LIVE</button>
+      <button id="endLiveBtn" onclick="endActualLive()" style="display:none;width:100%;padding:15px;border:0;border-radius:22px;background:#fff;color:#111;font-weight:900;font-size:16px;margin-top:10px">END LIVE</button>
+    </div>
+    <div id="creatorSelected" style="display:none;width:100%;max-width:360px;margin-top:18px">
+      <div id="creatorFileName" style="background:#222;padding:12px;border-radius:12px;margin-bottom:10px"></div>
+      <input id="caption" style="width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:0;margin-bottom:10px" placeholder="Add a caption...">
+      <button id="creatorPublish" onclick="publishFromModal()" style="width:100%;padding:14px;border:0;border-radius:20px;font-weight:800">NEXT</button>
+    </div>
+    <input id="mediaInput" type="file" accept="image/*,video/*" capture="environment" style="display:none" onchange="creatorPickedMedia()">
+  </div>
+</div>
+
+<div id="storyModal" class="modal">
+  <div class="sheet">
+    <button style="float:right;border:0;border-radius:50%;width:36px;height:36px" onclick="closeStoryModal()">×</button>
+    <h2>Add Story</h2><textarea id="storyText" placeholder="Write something..."></textarea>
+    <input id="storyMedia" type="file" accept="image/*,video/*" onchange="previewStory()"><div id="storyPreview"></div>
+    <button class="primary" onclick="publishStory()">Post Story</button>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const KEY='instagram_pro_v4';
+const defaults={
+  profile:{name:'Samuel',username:'samuel',bio:'Welcome to my Instagram Pro profile 🚀',followers:['Alex','Jane','Victoria'],following:['Alex','Jane']},
+  status:true,theme:'light',
+  notifications:[
+    {id:101,type:'like',icon:'❤️',actor:'Alex',text:'liked your post',time:Date.now()-3600000,read:false,category:'social'},
+    {id:102,type:'comment',icon:'💬',actor:'Jane',text:'commented on your post: Nice! ❤️',time:Date.now()-7200000,read:false,category:'social'},
+    {id:103,type:'follow',icon:'👤',actor:'Victoria',text:'started following you',time:Date.now()-10800000,read:true,category:'social'},
+    {id:104,type:'mention',icon:'@',actor:'Alex',text:'mentioned you in a story',time:Date.now()-14400000,read:true,category:'social'},
+    {id:105,type:'repost',icon:'🔁',actor:'Jane',text:'reposted your Reel',time:Date.now()-18000000,read:true,category:'social'},
+    {id:106,type:'message',icon:'💌',actor:'Victoria',text:'sent you a message',time:Date.now()-21600000,read:false,category:'messages'}
+  ],
+  posts:[
+    {id:1,user:'instagram_pro',caption:'Welcome to Instagram Pro 🚀',emoji:'📸',likes:12,liked:false,saved:false,comments:[],media:'',filter:'none',created:Date.now()-50000},
+    {id:2,user:'Alex',caption:'New day, new vibes ✨',emoji:'🌅',likes:8,liked:false,saved:false,comments:[{user:'Jane',text:'Nice!'}],media:'',filter:'none',created:Date.now()-40000}
+  ],
+  stories:[
+    {id:11,user:'Alex',text:'Hello 👋',media:''},
+    {id:12,user:'Jane',text:'Good vibes ❤️',media:''},
+    {id:13,user:'Victoria',text:'✨',media:''}
+  ],
+  reels:[
+    {id:21,user:'Alex',caption:'My first reel 🔥',emoji:'🎬',likes:18,liked:false,saved:false,reposts:0,reposted:false,comments:[],media:'',created:Date.now()-30000},
+    {id:22,user:'Victoria',caption:'Weekend vibes ✨',emoji:'💃',likes:9,liked:false,saved:false,reposts:0,reposted:false,comments:[],media:'',created:Date.now()-20000}
+  ],
+  messageRequests:[{id:501,user:'Chris',text:'Hey! I found your profile 👋',time:Date.now()-1800000}],
+  chats:[
+    {id:'alex',user:'Alex',messages:[{id:1,from:'Alex',text:'Hey! Welcome to Instagram Pro 👋',time:Date.now()-3600000}]},
+    {id:'jane',user:'Jane',messages:[{id:2,from:'Jane',text:'How are you? ❤️',time:Date.now()-7200000}]},
+    {id:'victoria',user:'Victoria',messages:[{id:3,from:'Samuel',text:'Hi Victoria!',time:Date.now()-10800000},{id:4,from:'Victoria',text:'Hey 😊',time:Date.now()-10700000}]}
+  ]
+};
+let db=loadDB(), currentChatId=null, editingMessageId=null;
+function loadDB(){
+  try{
+    const x=JSON.parse(localStorage.getItem(KEY));
+    const d=structuredClone(defaults);
+    const out=x?Object.assign(d,x):d;
+    if(!Array.isArray(out.posts)) out.posts=structuredClone(defaults.posts);
+    if(!Array.isArray(out.stories)) out.stories=structuredClone(defaults.stories);
+    if(!Array.isArray(out.reels)) out.reels=structuredClone(defaults.reels);
+    if(!Array.isArray(out.chats)) out.chats=structuredClone(defaults.chats);
+    if(!Array.isArray(out.messageRequests)) out.messageRequests=structuredClone(defaults.messageRequests);
+    if(!Array.isArray(out.notifications)) out.notifications=structuredClone(defaults.notifications);
+    if(!out.profile||typeof out.profile!=='object') out.profile=structuredClone(defaults.profile);
+     if(!out.profile.followers||!Array.isArray(out.profile.followers)) out.profile.followers=structuredClone(defaults.profile.followers);
+     if(!out.profile.following||!Array.isArray(out.profile.following)) out.profile.following=structuredClone(defaults.profile.following);
+    if(typeof out.status!=='boolean') out.status=defaults.status;
+    if(!out.theme) out.theme=defaults.theme;
+    return out;
+  }catch(e){
+    return structuredClone(defaults);
+  }
+}
+function saveLocalOnly(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){showToast('Local cache is full — large media should use Supabase Storage')}}
+function saveDB(){saveLocalOnly();if(window.instagramCloud)window.instagramCloud.queue()} 
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function addNotification(type,actor,text,category='social',icon){
+  db.notifications=db.notifications||[];
+  db.notifications.unshift({id:Date.now()+Math.random(),type,icon:icon||({like:'❤️',comment:'💬',follow:'👤',mention:'@',repost:'🔁',message:'💌'}[type]||'🔔'),actor:actor||'Someone',text,time:Date.now(),read:false,category});
+  db.notifications=db.notifications.slice(0,100);
+}
+function unreadNotificationCount(){return (db.notifications||[]).filter(n=>!n.read).length}
+function updateNotificationBadge(){const b=document.getElementById('notifBadge');if(!b)return;const n=unreadNotificationCount();b.textContent=n>99?'99+':n;b.style.display=n?'flex':'none'}
+function timeAgo(t){const sec=Math.max(0,Math.floor((Date.now()-t)/1000));if(sec<60)return 'just now';const min=Math.floor(sec/60);if(min<60)return min+'m';const hr=Math.floor(min/60);if(hr<24)return hr+'h';const d=Math.floor(hr/24);return d+'d'}
+let notifFilter='all';
+function renderNotifications(){
+  const box=document.getElementById('notificationsList');if(!box)return;
+  let list=(db.notifications||[]).filter(n=>notifFilter==='all'||n.category===notifFilter);
+  if(!list.length){box.innerHTML='<div class="empty">No notifications here yet 🔔</div>';updateNotificationBadge();return}
+  box.innerHTML=list.map(n=>`<button class="notifItem ${n.read?'':'unread'}" style="text-align:left;width:100%" onclick="openNotification(${JSON.stringify(n.id)})"><div class="notifIcon">${esc(n.icon||'🔔')}</div><div class="notifText"><div><b>${esc(n.actor||'Someone')}</b> ${esc(n.text||'')}</div><div class="notifTime">${timeAgo(n.time)}${n.read?'':' · New'}</div></div></button>`).join('');
+  updateNotificationBadge();
+}
+function openNotification(id){const n=db.notifications.find(x=>String(x.id)===String(id));if(!n)return;n.read=true;saveDB();renderNotifications();
+  if(n.type==='message'){showPage('messages');return}
+  if(n.type==='like'||n.type==='comment'){showPage('home');return}
+  if(n.type==='repost'){showPage('reels');return}
+  if(n.type==='mention'){showPage('home');return}
+  if(n.type==='follow'){showPage('profile');return}
+}
+function markAllNotificationsRead(){(db.notifications||[]).forEach(n=>n.read=true);saveDB();renderNotifications();showToast('All notifications marked as read ✓')}
+function setNotifFilter(v){notifFilter=v;renderNotifications()}
+function followUser(name){addNotification('follow',name,'started following you','social','👤');saveDB();renderNotifications();showToast('Followed '+name+' 👤')}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const target=document.getElementById(id);if(!target)return;target.classList.add('active');
+  if(id==='home')renderFeed(); if(id==='profile')renderProfile(); if(id==='settings')renderSettings(); if(id==='reels')renderReels(); if(id==='messages')renderChats(); if(id==='notifications')renderNotifications(); if(id==='owner')renderOwnerDashboard();
+  window.scrollTo(0,0);
+}
+function renderStories(){
+  const box=document.getElementById('stories'); if(!box)return;
+  box.innerHTML='<div class="story"><button onclick="openStoryModal()"><div class="avatar">＋</div><div>Your story</div></button></div>'+
+    db.stories.map(s=>`<div class="story"><button onclick="viewStory(${s.id})"><div class="avatar">${esc((s.user||'S')[0].toUpperCase())}</div><div>${esc(s.user)}</div></button></div>`).join('');
+}
+function storyFilterCSS(f){return f==='vivid'?'saturate(1.65) contrast(1.12)':f==='warm'?'sepia(.28) saturate(1.3)':f==='cool'?'hue-rotate(20deg) saturate(.9)':f==='bw'?'grayscale(1)':'none'}
+function openStoryModal(){document.getElementById('storyModal').classList.add('open')}
+function previewStoryMedia(e){const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{const box=document.getElementById('storyPreview');const old=box.querySelector('img,video');if(old)old.remove();const el=document.createElement(f.type.startsWith('video/')?'video':'img');el.src=r.result;el.controls=f.type.startsWith('video/');el.autoplay=f.type.startsWith('video/');el.muted=true;el.playsInline=true;el.style.cssText='width:100%;height:100%;object-fit:cover';box.prepend(el);document.getElementById('storyPlaceholder').style.display='none';applyStoryPreview()};r.readAsDataURL(f)}
+function updateStoryPreview(){const t=document.getElementById('storyText')?.value||'';const m=document.getElementById('storyMentions')?.value.trim()||'';document.getElementById('storyOverlay').textContent=t;const mp=document.getElementById('storyMentionPreview');mp.textContent=m;mp.style.display=m?'block':'none'}
+function applyStoryPreview(){const el=document.getElementById('storyPreview')?.querySelector('img,video');if(el)el.style.filter=storyFilterCSS(document.getElementById('storyFilter')?.value||'none');updateStoryPreview()}
+function publishStory(){
+  const file=document.getElementById('storyMedia')?.files?.[0],text=document.getElementById('storyText')?.value.trim()||'',raw=document.getElementById('storyMentions')?.value||'',music=document.getElementById('storyMusic')?.value||'',filter=document.getElementById('storyFilter')?.value||'none';
+  const mentions=(raw.match(/@[A-Za-z0-9_]+/g)||[]);
+  const finish=(media)=>{db.stories.unshift({id:Date.now(),user:db.profile.name,text:text||'New story ✨',media:media||'',mentions,music,filter,replies:[],created:Date.now()});db.stories=db.stories.slice(0,30);saveDB();closeModal();renderStories();showToast('Story posted 🎉')};
+  if(!file){finish('');return} if(file.size>7*1024*1024){showToast('Choose a media file under 7MB');return} readFile(file).then(finish)
+}
+function replyToStory(id){const input=document.getElementById('storyReplyInput');const text=input?.value.trim();if(!text)return;const s=db.stories.find(x=>x.id===id);if(!s)return;s.replies=s.replies||[];s.replies.push({user:db.profile.name,text,time:Date.now()});if(s.user!==db.profile.name)addNotification('comment',db.profile.name,'replied to your story: '+text,'social','💬');if(new RegExp('@'+db.profile.username+'\\b','i').test(text))addNotification('mention',db.profile.name,'mentioned you in a story reply','social','@');saveDB();updateNotificationBadge();input.value='';renderStoryReplies(s);showToast('Story reply sent 💬')}
+function renderStoryReplies(s){const box=document.getElementById('storyReplies');if(!box)return;box.innerHTML=(s.replies||[]).slice(-8).map(r=>`<div><b>${esc(r.user)}</b>: ${esc(r.text)}</div>`).join('')||'<span class="muted">No replies yet</span>'}
+function viewStory(id){const s=db.stories.find(x=>x.id===id);if(!s)return;const media=s.media?(s.media.startsWith('data:video')?`<video controls autoplay playsinline src="${s.media}"></video>`:`<img src="${s.media}">`):`<div style="font-size:32px">${esc(s.text||'Story')}</div>`;openModal(`<div class="storySheet" style="background:#111;color:#fff"><div class="storyPreview" style="background:#111">${media}<div class="storyTextOverlay">${esc(s.text||'')}</div>${s.mentions?.length?`<div class="storyMention">${esc(s.mentions.join(' '))}</div>`:''}</div>${s.music?`<div class="storyMusic">🎵 ${esc(s.music)}</div>`:''}<div class="storyReplyList" id="storyReplies"></div><div class="storyReply"><input id="storyReplyInput" placeholder="Reply to ${esc(s.user)}..." onkeydown="if(event.key==='Enter')replyToStory(${s.id})"><button class="primary" onclick="replyToStory(${s.id})">Send</button></div><button class="setting" style="width:100%;margin-top:8px" onclick="closeModal()">Close</button></div>`);renderStoryReplies(s)}
+function mediaHTML(p){
+  if(!p.media)return `<div class="placeholderMedia">${esc(p.emoji||'📸')}</div>`;
+  return p.media.startsWith('data:video')?`<video class="postMedia" controls playsinline preload="metadata" src="${p.media}"></video>`:`<img class="postMedia filter-${p.filter||'none'}" src="${p.media}" alt="Post">`;
+}
+function renderFeed(){
+  renderStories();
+  const q=(document.getElementById('feedSearch').value||'').toLowerCase();
+  const posts=db.posts.filter(p=>(p.caption+' '+p.user).toLowerCase().includes(q));
+  const feed=document.getElementById('feed');
+  if(!posts.length){feed.innerHTML='<div class="empty">No posts found.</div>';return}
+  feed.innerHTML=posts.map(p=>`<article class="post">
+    <div class="postHead"><div class="mini">${esc((p.user||'S')[0])}</div><div><b>${esc(p.user)}</b><div class="muted">@${esc((p.user||'user').toLowerCase())}</div></div></div>
+    ${mediaHTML(p)}
+    <div class="actions"><button class="actionBtn ${p.liked?'liked':''}" onclick="toggleLike(${p.id})">${p.liked?'♥':'♡'}</button><button class="actionBtn" onclick="focusComment(${p.id})">💬</button><button class="actionBtn" onclick="sharePost(${p.id})">➤</button><button class="actionBtn" style="margin-left:auto" onclick="toggleSave(${p.id})">${p.saved?'🔖':'▫'}</button></div>
+    <div class="caption"><b>${esc(p.user)}</b> ${esc(p.caption)}<div class="muted">${p.likes||0} likes</div></div>
+    <div class="comments">${(p.comments||[]).slice(-3).map(c=>`<div class="comment"><b>${esc(c.user)}:</b> ${esc(c.text)}</div>`).join('')}</div>
+    <div class="commentBox"><input id="comment-${p.id}" placeholder="Add a comment..." onkeydown="if(event.key==='Enter')addComment(${p.id})"><button onclick="addComment(${p.id})">Post</button></div>
+  </article>`).join('');
+}
+function toggleLike(id){const p=db.posts.find(x=>x.id===id);if(!p)return;p.liked=!p.liked;p.likes=Math.max(0,(p.likes||0)+(p.liked?1:-1));if(p.liked&&p.user!==db.profile.name)addNotification('like',db.profile.name,'liked your post','social','❤️');saveDB();renderFeed();updateNotificationBadge()}
+function toggleSave(id){const p=db.posts.find(x=>x.id===id);if(!p)return;p.saved=!p.saved;saveDB();renderFeed();showToast(p.saved?'Post saved 🔖':'Post removed from saved')}
+function addComment(id){const input=document.getElementById('comment-'+id);const text=input.value.trim();if(!text)return;const p=db.posts.find(x=>x.id===id);p.comments=p.comments||[];p.comments.push({user:db.profile.name,text});if(p.user!==db.profile.name)addNotification('comment',db.profile.name,'commented on your post: '+text,'social','💬');if(/@(?:samuel|'+db.profile.username+')\b/i.test(text))addNotification('mention',db.profile.name,'mentioned you in a comment','social','@');saveDB();renderFeed();updateNotificationBadge();showToast('Comment added 💬')}
+function focusComment(id){const el=document.getElementById('comment-'+id);if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'})}}
+async function sharePost(id){const p=db.posts.find(x=>x.id===id);const text=`${p.user}: ${p.caption}`;try{if(navigator.share)await navigator.share({title:'Instagram Pro',text});else if(navigator.clipboard)await navigator.clipboard.writeText(text);showToast('Post shared/copied 📤')}catch(e){showToast('Share cancelled')}}
+let creatorMode='reel',creatorStream=null,creatorFacing='environment',creatorRecorder=null,creatorChunks=[],creatorSelectedMedia='',creatorIsRecording=false,creatorMuted=false;
+function openCreate(type='post'){
+  stopLiveCamera();
+  creatorMode=['story','reel','post','live'].includes(type)?type:'post';
+  const overlay=document.getElementById('createModal'); overlay.classList.add('show');
+  const input=document.getElementById('mediaInput'); input.value='';
+  input.accept=creatorMode==='reel'?'video/*':'image/*,video/*';
+  if(creatorMode!=='live') input.setAttribute('capture','environment');
+  document.getElementById('caption').value='';
+  document.getElementById('creatorSelected').style.display='none';
+  const titles={story:'Create Story',post:'Create Post',reel:'Create Reel',live:'Go Live'};
+  const emojis={story:'📖',post:'📸',reel:'🎬',live:'🔴'};
+  document.getElementById('creatorTitle').textContent=titles[creatorMode];
+  document.getElementById('creatorEmoji').textContent=emojis[creatorMode];
+  const mediaButtons=document.getElementById('creatorMediaButtons');
+  const livePanel=document.getElementById('liveCameraPanel');
+  if(creatorMode==='live'){
+    mediaButtons.style.display='none';
+    document.getElementById('creatorSelected').style.display='none';
+    livePanel.style.display='block';
+    document.getElementById('creatorHint').textContent='Allow camera and microphone, then tap START LIVE.';
+    startLiveCamera();
+  }else{
+    mediaButtons.style.display='grid'; livePanel.style.display='none';
+    document.getElementById('creatorHint').textContent='Choose Camera to use your phone camera or Gallery to select existing media.';
+  }
+}
+let liveStream=null,liveStartedAt=0,liveTimer=null;
+async function startLiveCamera(){
+  const video=document.getElementById('liveCameraVideo'), status=document.getElementById('liveCameraStatus');
+  if(!navigator.mediaDevices?.getUserMedia){status.textContent='Camera access is unavailable in this browser. Open the app from HTTPS/Chrome and try again.';return;}
+  try{
+    liveStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+    video.srcObject=liveStream; await video.play();
+    status.textContent='Camera and microphone ready.';
+  }catch(e){
+    status.textContent='Camera/microphone permission was blocked. Allow both permissions and try again.';
+  }
+}
+function startActualLive(){
+  if(!liveStream){showToast('Camera and microphone are not ready yet.');return;}
+  liveStartedAt=Date.now();
+  document.getElementById('startLiveBtn').style.display='none';
+  document.getElementById('endLiveBtn').style.display='block';
+  document.getElementById('liveCameraStatus').textContent='🔴 LIVE — 00:00';
+  clearInterval(liveTimer);
+  liveTimer=setInterval(()=>{const sec=Math.floor((Date.now()-liveStartedAt)/1000),m=String(Math.floor(sec/60)).padStart(2,'0'),ss=String(sec%60).padStart(2,'0');document.getElementById('liveCameraStatus').textContent='🔴 LIVE — '+m+':'+ss},1000);
+  showToast('You are live 🔴');
+}
+function endActualLive(){
+  const elapsed=liveStartedAt?Math.floor((Date.now()-liveStartedAt)/1000):0;
+  stopLiveCamera();
+  showToast('Live ended '+Math.floor(elapsed/60)+':'+String(elapsed%60).padStart(2,'0'));
+  closeModal();
+}
+function stopLiveCamera(){
+  clearInterval(liveTimer); liveTimer=null;
+  if(liveStream){liveStream.getTracks().forEach(t=>t.stop());liveStream=null;}
+  const video=document.getElementById('liveCameraVideo'); if(video)video.srcObject=null;
+  const start=document.getElementById('startLiveBtn'),end=document.getElementById('endLiveBtn');
+  if(start)start.style.display='block'; if(end)end.style.display='none';
+}
+function openNativeCreatorCamera(){
+  const m=document.getElementById('mediaInput');
+  if(creatorMode==='reel')m.accept='video/*'; else m.accept='image/*,video/*';
+  m.setAttribute('capture','environment');m.click();
+}
+function openNativeCreatorGallery(){
+  const m=document.getElementById('mediaInput');
+  m.removeAttribute('capture');m.accept=creatorMode==='reel'?'video/*':'image/*,video/*';m.click();
+}
+function creatorPickedMedia(){
+  const f=document.getElementById('mediaInput').files?.[0];if(!f)return;
+  if(creatorMode==='reel'&&!f.type.startsWith('video/')){showToast('Reel needs a video');return;}
+  document.getElementById('creatorSelected').style.display='block';
+  document.getElementById('creatorFileName').textContent='Selected: '+f.name;
+  document.getElementById('creatorPublish').textContent=creatorMode==='live'?'START LIVE':'NEXT';
+}
+function closeModal(){stopLiveCamera();document.getElementById('createModal').classList.remove('show');const m=document.getElementById('mediaInput');if(m)m.value='';}
+async function publishFromModal(){
+  const f=document.getElementById('mediaInput').files?.[0],caption=document.getElementById('caption').value.trim();
+  if(creatorMode==='live'){if(liveStream){startActualLive();}else{showToast('Start Live after camera and microphone are ready.');}return;}
+  if(creatorMode==='reel'&&!f){showToast('Choose a Reel video first.');return;}
+  if(!f&&!caption){showToast('Choose media or add text first.');return;}
+  if(creatorMode==='story'){
+    const media=f?await readFile(f):'';db.stories.unshift({id:Date.now(),user:db.profile.name,text:caption||'New story ✨',media,created:Date.now()});saveDB();closeModal();renderStories();showToast('Story posted 🎉');return;
+  }
+  if(creatorMode==='reel'){
+    let media=await readFile(f);db.reels.unshift({id:Date.now(),user:db.profile.name,caption:caption||'New Reel ✨',emoji:'🎬',likes:0,liked:false,saved:false,reposts:0,reposted:false,comments:[],media,created:Date.now()});saveDB();closeModal();showPage('reels');showToast('Reel published 🎬');return;
+  }
+  const media=f?await readFile(f):'';db.posts.unshift({id:Date.now(),user:db.profile.name,caption:caption||'New post ✨',emoji:'📸',likes:0,liked:false,saved:false,comments:[],media,created:Date.now()});saveDB();closeModal();showPage('home');showToast('Post published 🎉');
+}
+function createFromQuick(){
+  const f=document.getElementById('quickMedia').files[0],caption=document.getElementById('quickCaption').value.trim();
+  if(!caption&&!f){showToast('Add something to your post');return}
+  readFile(f).then(media=>{db.posts.unshift({id:Date.now(),user:db.profile.name,caption:caption||'New post ✨',emoji:'📸',likes:0,liked:false,saved:false,comments:[],media:media||'',filter:'none',created:Date.now()});saveDB();document.getElementById('quickCaption').value='';document.getElementById('quickMedia').value='';showPage('home');showToast('Post published 🎉')})
+}
+function readFile(file){return new Promise(resolve=>{if(!file)return resolve('');const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>resolve('');r.readAsDataURL(file)})}
+function renderReels(){
+  normalizeReels();
+  const box=document.getElementById('reelsFeed');
+  if(!db.reels.length){box.innerHTML='<div class="empty">No Reels yet. Create your first one 🎬</div>';return}
+  box.innerHTML=db.reels.map(r=>`<article class="reel">
+    ${r.media?`<video playsinline controls preload="metadata" src="${r.media}"></video>`:`<div class="placeholderMedia" style="height:650px">${esc(r.emoji||'🎬')}</div>`}
+    <div class="reelShade"></div>
+    <div class="reelInfo"><h3>@${esc(r.user)}</h3><p>${esc(r.caption)}</p></div>
+    <div class="reelActions"><button onclick="toggleReelLike(${r.id})">${r.liked?'♥':'♡'}</button><small>${r.likes||0}</small><button onclick="focusReelComment(${r.id})">💬</button><button onclick="repostReel(${r.id})">${r.reposted?'🔁':'↻'}</button><small>${r.reposts||0}</small><button onclick="toggleReelSave(${r.id})">${r.saved?'🔖':'🔖'}</button><button onclick="shareReel(${r.id})">➤</button></div>
+  </article>`).join('');
+}
+function normalizeReels(){(db.reels||[]).forEach(r=>{if(typeof r.saved!=='boolean')r.saved=false;if(typeof r.reposted!=='boolean')r.reposted=false;if(typeof r.reposts!=='number')r.reposts=0})}
+function toggleReelLike(id){const r=db.reels.find(x=>x.id===id);if(!r)return;r.liked=!r.liked;r.likes=Math.max(0,(r.likes||0)+(r.liked?1:-1));saveDB();renderReels()}
+function toggleReelSave(id){const r=db.reels.find(x=>x.id===id);if(!r)return;r.saved=!r.saved;saveDB();renderReels();showToast(r.saved?'Reel saved 🔖':'Removed from saved')}
+function repostReel(id){const r=db.reels.find(x=>x.id===id);if(!r)return;r.reposted=!r.reposted;r.reposts=Math.max(0,(r.reposts||0)+(r.reposted?1:-1));if(r.reposted&&r.user!==db.profile.name)addNotification('repost',db.profile.name,'reposted your Reel','social','🔁');saveDB();renderReels();updateNotificationBadge();showToast(r.reposted?'Reel reposted 🔁':'Repost removed')}
+async function shareReel(id){const r=db.reels.find(x=>x.id===id);try{if(navigator.share)await navigator.share({title:'Instagram Pro Reel',text:`${r.user}: ${r.caption}`});else if(navigator.clipboard)await navigator.clipboard.writeText(`${r.user}: ${r.caption}`);showToast('Reel shared/copied 📤')}catch(e){showToast('Share cancelled')}}
+function focusReelComment(id){const r=db.reels.find(x=>x.id===id);const text=prompt(`Comment on ${r.user}'s Reel:`);if(text&&text.trim()){r.comments=r.comments||[];r.comments.push({user:db.profile.name,text:text.trim()});saveDB();showToast('Reel comment added 💬')}}
+function closeStoryModal(){document.getElementById('storyModal').classList.remove('open');document.getElementById('storyText').value='';document.getElementById('storyMedia').value='';document.getElementById('storyPreview').innerHTML=''}
+function previewStory(){const f=document.getElementById('storyMedia').files[0];if(!f)return;readFile(f).then(x=>document.getElementById('storyPreview').innerHTML=f.type.startsWith('video')?`<video class="preview" controls playsinline src="${x}"></video>`:`<img class="preview" src="${x}">`)}
+function renderSearch(){
+  const input=document.getElementById('globalSearch');
+  const box=document.getElementById('searchResults');
+  if(!input||!box)return;
+  const q=(input.value||'').trim().toLowerCase();
+  const posts=db.posts||[], reels=db.reels||[], stories=db.stories||[], chats=db.chats||[];
+  const users=[...new Set([
+    ...posts.map(p=>p.user),...reels.map(r=>r.user),...stories.map(s=>s.user),...chats.map(c=>c.user),db.profile?.name
+  ].filter(Boolean))];
+  if(!q){
+    box.innerHTML=`<div class="card"><b>🔎 Search Instagram Pro</b><p class="muted">Find users, posts, Reels and conversations.</p></div>
+      <div class="card"><b>👥 People</b><p class="muted">Try searching for Alex, Jane, Victoria or another username.</p></div>`;
+    return;
+  }
+  const people=users.filter(u=>u.toLowerCase().includes(q));
+  const postMatches=posts.filter(p=>(String(p.caption||'')+' '+String(p.user||'')).toLowerCase().includes(q));
+  const reelMatches=reels.filter(r=>(String(r.caption||'')+' '+String(r.user||'')).toLowerCase().includes(q));
+  const chatMatches=chats.filter(c=>String(c.user||'').toLowerCase().includes(q)||c.messages?.some(m=>String(m.text||'').toLowerCase().includes(q)));
+  let html='';
+  if(people.length) html+=`<h3>People</h3>`+people.map(u=>`<button class="card searchResult" onclick="openSearchUser(${JSON.stringify(u)})"><b>👤 ${esc(u)}</b><p class="muted">@${esc(u.toLowerCase().replace(/\\s+/g,''))} · Creator on Instagram Pro</p></button>`).join('');
+  if(postMatches.length) html+=`<h3>Posts</h3>`+postMatches.map(p=>`<button class="card searchResult" onclick="openSearchPost(${p.id})"><b>📸 ${esc(p.user)}</b><p>${esc(p.caption||'')}</p><small class="muted">${p.likes||0} likes</small></button>`).join('');
+  if(reelMatches.length) html+=`<h3>Reels</h3>`+reelMatches.map(r=>`<button class="card searchResult" onclick="openSearchReel(${r.id})"><b>🎬 ${esc(r.user)}</b><p>${esc(r.caption||'')}</p><small class="muted">${r.likes||0} likes</small></button>`).join('');
+  if(chatMatches.length) html+=`<h3>Messages</h3>`+chatMatches.map(c=>`<button class="card searchResult" onclick="openSearchChat(${JSON.stringify(c.id)})"><b>💬 ${esc(c.user)}</b><p class="muted">${esc((c.messages?.[c.messages.length-1]?.text)||'Conversation')}</p></button>`).join('');
+  box.innerHTML=html||'<div class="empty">No results found. Try another name or word.</div>';
+}
+function openSearchUser(name){
+  showPage('profile');
+  showToast('User profile selected: '+name);
+}
+function openSearchPost(id){
+  showPage('home');
+  const input=document.getElementById('feedSearch');
+  const p=db.posts.find(x=>x.id===id);
+  if(p&&input){input.value=p.user;renderFeed();setTimeout(()=>document.querySelector('.post')?.scrollIntoView({behavior:'smooth',block:'start'}),80);}
+}
+function openSearchReel(id){
+  showPage('reels');
+  const r=db.reels.find(x=>x.id===id);
+  if(r) toast('Reel by '+r.user);
+}
+function openSearchChat(id){
+  showPage('messages');
+  openChat(id);
+}
+function toggleOwnFollow(){db.follows=db.follows||{following:false,followers:0,followingCount:0};db.follows.following=!db.follows.following;db.follows.followingCount=db.follows.following?1:0;saveDB();renderProfile();showToast(db.follows.following?'Following ✓':'Unfollowed');}
+function renderOwnerDashboard(){
+ const posts=db.posts||[], reels=db.reels||[], chats=db.chats||[], reqs=db.messageRequests||[], notifs=db.notifications||[];
+ const users=[...new Set([...posts.map(x=>x.user),...reels.map(x=>x.user),...chats.map(x=>x.user),...((db.stories||[]).map(x=>x.user)),db.profile?.name].filter(Boolean))];
+ const views=posts.reduce((a,p)=>a+5+(p.likes||0),0)+(reels.reduce((a,r)=>a+8+(r.likes||0),0));
+ const earnings=(views*.25).toFixed(2);
+ const stats=document.getElementById('ownerStats'); if(stats)stats.innerHTML=`<div class="stat"><b>${users.length}</b><span>Users</span></div><div class="stat"><b>${posts.length}</b><span>Posts</span></div><div class="stat"><b>${reels.length}</b><span>Reels</span></div><div class="stat"><b>KSh ${earnings}</b><span>Demo earnings</span></div>`;
+ const ov=document.getElementById('ownerOverview'); if(ov)ov.innerHTML=`<p>👀 Estimated views: <b>${views}</b></p><p>📩 Message requests: <b>${reqs.length}</b></p><p>🔔 Notifications: <b>${notifs.length}</b></p><p>💬 Conversations: <b>${chats.length}</b></p><p>📸 Stories: <b>${(db.stories||[]).length}</b></p>`;
+ const u=document.getElementById('ownerUsers'); if(u)u.innerHTML=users.map(name=>`<div class="listRow"><span>👤 <b>${esc(name)}</b></span><span class="muted">${name===db.profile.name?'Owner':'User'}</span></div>`).join('');
+ const m=document.getElementById('ownerMaintenance'); if(m)m.textContent=db.owner?.maintenance?'⚠️ Maintenance mode is ON':'Maintenance mode is OFF';
+}
+function ownerAnnouncement(){const t=prompt('Owner announcement:');if(t&&t.trim()){db.owner=db.owner||{};db.owner.announcement=t.trim();addNotification('announcement','Owner',t.trim(),'social','📢');saveDB();renderOwnerDashboard();showToast('Announcement created 📢')}}
+function ownerToggleMaintenance(){db.owner=db.owner||{};db.owner.maintenance=!db.owner.maintenance;saveDB();renderOwnerDashboard();showToast(db.owner.maintenance?'Maintenance mode ON':'Maintenance mode OFF')}
+function ownerResetDemo(){if(confirm('Reset demo posts, messages and activity? Your profile/settings may remain.')){db.posts=structuredClone(defaults.posts);db.reels=structuredClone(defaults.reels);db.stories=structuredClone(defaults.stories);db.chats=structuredClone(defaults.chats);db.notifications=structuredClone(defaults.notifications);db.messageRequests=structuredClone(defaults.messageRequests||[]);saveDB();renderOwnerDashboard();showToast('Demo data reset')}}
+function renderProfile(){
+  const prof=db.profile||{};
+  const followers=Array.isArray(prof.followers)?prof.followers:[];
+  const following=Array.isArray(prof.following)?prof.following:[];
+  document.getElementById('profileName').textContent=prof.name||'Samuel';
+  const pu=document.getElementById('profileUsername'); if(pu)pu.textContent='@'+String(prof.username||'samuel').replace(/^@/,'');
+  document.getElementById('profileBio').textContent=prof.bio||'';
+  const mine=db.posts.filter(p=>p.user===prof.name);
+  document.getElementById('profileFollowers').textContent=followers.length;
+  document.getElementById('profileFollowing').textContent=following.length;
+  document.getElementById('profilePosts').textContent=mine.length;
+  document.getElementById('profileLikes').textContent=mine.reduce((a,p)=>a+(p.likes||0),0);
+  document.getElementById('profileGrid').innerHTML=mine.length?mine.map(p=>`<div class="gridItem">${p.media?(p.media.startsWith('data:video')?`<video src="${p.media}"></video>`:`<img src="${p.media}">`):esc(p.emoji||'📸')}</div>`).join(''):'<div class="empty" style="grid-column:1/4">No posts yet</div>';
+}
+function showFollowList(type){
+  const panel=document.getElementById('followListPanel'); if(!panel)return;
+  const list=(db.profile&&Array.isArray(db.profile[type]))?db.profile[type]:[];
+  panel.style.display='block';
+  panel.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">${type==='followers'?'Followers':'Following'} (${list.length})</h3><button class="iconBtn" onclick="document.getElementById('followListPanel').style.display='none'">×</button></div><div class="followList" style="margin-top:10px">${list.length?list.map(name=>`<div class="followCard"><div class="mini">${esc((name||'U')[0].toUpperCase())}</div><div class="followCardInfo"><b>${esc(name)}</b><div class="muted">@${esc(String(name).toLowerCase().replace(/\s+/g,''))}</div></div>${type==='following'?`<button class="following" onclick="toggleFollow('${esc(name)}')">Following</button>`:`<button onclick="openSearchUser(${JSON.stringify(name)})">View</button>`}</div>`).join(''):'<div class="empty">No ${type} yet.</div>'}</div>`;
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function toggleFollow(name){
+  const prof=db.profile; prof.following=Array.isArray(prof.following)?prof.following:[];
+  const i=prof.following.indexOf(name);
+  if(i>=0){prof.following.splice(i,1);showToast('Unfollowed '+name);}
+  else{prof.following.push(name);addNotification('follow',name,'started following you','social','👤');showToast('Following '+name+' 👤');}
+  saveDB();renderProfile();showFollowList('following');updateNotificationBadge();
+}
+async function editProfile(){const n=prompt('Display name:',db.profile.name);if(!n||!n.trim())return;db.profile.name=n.trim();const u=prompt('Username:',db.profile.username||'samuel');if(u&&u.trim())db.profile.username=u.trim().replace(/^@/,'');const b=prompt('Bio:',db.profile.bio);if(b!==null)db.profile.bio=b.trim();saveLocalOnly();renderProfile();renderFeed();if(window.instagramCloud){window.instagramCloud.userId=window.instagramCloud.userId||null;const ok=await window.instagramCloud.save(true);const profileOk=await upsertCloudProfile();showToast(ok&&profileOk?'Profile saved to Supabase ☁️':'Profile saved locally — cloud save failed');}else{showToast('Profile updated ✨')}}
+function toggleStatus(){db.status=!db.status;saveDB();renderSettings();showToast(db.status?'Activity status ON':'Activity status OFF')}
+function setTheme(v){db.theme=v;saveDB();applyTheme();showToast(v==='dark'?'Dark mode on 🌙':'Light mode on ☀️')}
+function applyTheme(){document.documentElement.classList.toggle('dark',db.theme==='dark');const s=document.getElementById('themeSelect');if(s)s.value=db.theme}
+
+function ensureSettings(){db.settings=db.settings||{};const st=db.settings;st.twoFactor=!!st.twoFactor;st.readReceipts=st.readReceipts!==false;st.push=st.push!==false;st.likes=st.likes!==false;st.social=st.social!==false;st.messages=st.messages!==false;st.dataSaver=!!st.dataSaver;st.privateAccount=!!st.privateAccount;st.messageWho=st.messageWho||'Everyone';st.commentWho=st.commentWho||'Everyone';st.mentionWho=st.mentionWho||'Everyone';return st}
+function setToggle(id,on){const e=document.getElementById(id);if(e)e.classList.toggle('on',!!on)}
+function renderExtraSettings(){const st=ensureSettings();setToggle('twoFactorToggle',st.twoFactor);setToggle('readReceiptToggle',st.readReceipts);setToggle('pushToggle',st.push);setToggle('likeNotifToggle',st.likes);setToggle('socialNotifToggle',st.social);setToggle('messageNotifToggle',st.messages);setToggle('dataSaverToggle',st.dataSaver);setToggle('privateToggle',st.privateAccount)}
+function toggleTwoFactor(){const st=ensureSettings();st.twoFactor=!st.twoFactor;saveDB();renderExtraSettings();showToast(st.twoFactor?'Two-factor authentication enabled 🔐':'Two-factor authentication disabled')}
+function toggleReadReceipts(){const st=ensureSettings();st.readReceipts=!st.readReceipts;saveDB();renderExtraSettings();showToast(st.readReceipts?'Read receipts ON':'Read receipts OFF')}
+function toggleSetting(k){const st=ensureSettings();st[k]=!st[k];saveDB();renderExtraSettings();showToast((k==='dataSaver'?'Data Saver':k+' notifications')+(st[k]?' ON':' OFF'))}
+function togglePrivateAccount(){const st=ensureSettings();st.privateAccount=!st.privateAccount;db.profile.private=st.privateAccount;saveDB();renderExtraSettings();showToast(st.privateAccount?'Private account ON 🔒':'Private account OFF')}
+function changePasswordDemo(){const a=prompt('Enter current password (demo):');if(a===null)return;const b=prompt('Enter new password:');if(b&&b.length>=6)showToast('Password changed in demo 🔑');else showToast('Password must be at least 6 characters')}
+function showLoginActivity(){showToast('Current device: Android • Active now 📱')}
+function logoutAllDemo(){if(confirm('Log out of all other devices?'))showToast('Other sessions signed out 🚪')}
+function privacyChoices(){const st=ensureSettings();const v=prompt('Who can message you? Enter Everyone, Followers, or Nobody.',st.messageWho);if(v&&['Everyone','Followers','Nobody'].includes(v)){st.messageWho=v;saveDB();showToast('Message privacy: '+v)}}
+function commentChoices(){const st=ensureSettings();const v=prompt('Who can comment? Enter Everyone, Followers, or Nobody.',st.commentWho);if(v&&['Everyone','Followers','Nobody'].includes(v)){st.commentWho=v;saveDB();showToast('Comment privacy: '+v)}}
+function tagMentionChoices(){const st=ensureSettings();const v=prompt('Who can mention/tag you? Enter Everyone, Followers, or Nobody.',st.mentionWho);if(v&&['Everyone','Followers','Nobody'].includes(v)){st.mentionWho=v;saveDB();showToast('Mention/tag privacy: '+v)}}
+function showContentPrefs(){showToast('Hidden words controls opened 🚫')}
+function showMutedAccounts(){showToast('No muted accounts yet 🔇')}
+function downloadInfoDemo(){const data=JSON.stringify(db,null,2);const blob=new Blob([data],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='instagram-pro-my-data.json';a.click();URL.revokeObjectURL(a.href);showToast('Your demo data downloaded 📥')}
+function deactivateDemo(){if(confirm('Deactivate this demo account?')){db.profile.deactivated=true;saveDB();showToast('Account marked as deactivated ⏸️')}}
+async function deleteAccountDemo(){if(!confirm('Delete your app data? This cannot be undone.'))return;try{if(window.supabaseClient){const session=await instagramCloud.session();if(session){const {error}=await window.supabaseClient.from('app_state').delete().eq('user_id',session.user.id);if(error)throw error;await window.supabaseClient.auth.signOut()}}}catch(e){showToast('Cloud deletion failed: '+(e.message||'check RLS'));return}localStorage.removeItem(KEY);db=structuredClone(defaults);showToast('Account data deleted. 🔐');setTimeout(()=>location.reload(),700)}
+function renderSettings(){document.getElementById('statusToggle').classList.toggle('on',!!db.status);document.getElementById('themeSelect').value=db.theme;applyTheme();renderExtraSettings()}
+function filterSettings(q){q=q.toLowerCase();document.querySelectorAll('.settingGroup').forEach(g=>g.style.display=g.innerText.toLowerCase().includes(q)?'block':'none')}
+function showDashboard(){const d=document.getElementById('dashboard');d.style.display='block';const views=db.posts.reduce((a,p)=>a+5+(p.likes||0),0);const earnings=(views*.25).toFixed(2);d.innerHTML=`<h3>📊 Dashboard & Earnings</h3><p><b>${views}</b> estimated views</p><p><b>${db.posts.length}</b> posts</p><p><b>${db.reels.length}</b> reels</p><p><b>KSh ${earnings}</b> demo earnings</p><small class="muted">Prototype calculation only. Real payments need a backend and payment provider.</small>`;d.scrollIntoView({behavior:'smooth'})}
+
+function renderMessageRequests(){
+  const box=document.getElementById('messageRequestsPanel'),badge=document.getElementById('requestBadge');
+  if(!box||!badge)return;
+  const reqs=db.messageRequests||[]; badge.textContent=reqs.length; badge.style.display=reqs.length?'inline-block':'none';
+  box.innerHTML=reqs.length?reqs.map(r=>`<div class="requestCard"><div class="mini">${esc((r.user||'U')[0].toUpperCase())}</div><div><b>${esc(r.user)}</b><div class="muted">${esc(r.text||'Wants to message you')}</div><small class="muted">${timeAgo(r.time)}</small></div><div class="requestActions"><button class="acceptReq" onclick="acceptMessageRequest(${r.id})">Accept</button><button class="declineReq" onclick="declineMessageRequest(${r.id})">Delete</button></div></div>`).join(''):'<div class="empty">No message requests 📭</div>';
+}
+function toggleMessageRequests(){const p=document.getElementById('messageRequestsPanel');if(!p)return;p.style.display=p.style.display==='none'?'block':'none';renderMessageRequests()}
+function acceptMessageRequest(id){const r=(db.messageRequests||[]).find(x=>x.id===id);if(!r)return;db.messageRequests=db.messageRequests.filter(x=>x.id!==id);let c=db.chats.find(x=>x.user===r.user);if(!c){c={id:'req_'+id,user:r.user,messages:[]};db.chats.unshift(c)}c.messages.push({id:Date.now(),from:r.user,text:r.text,time:r.time});addNotification('message',r.user,'request accepted','messages','💬');saveDB();renderMessageRequests();renderChats();showToast('Message request accepted ✅')}
+function declineMessageRequest(id){const r=(db.messageRequests||[]).find(x=>x.id===id);db.messageRequests=(db.messageRequests||[]).filter(x=>x.id!==id);if(r)addNotification('message',r.user,'message request deleted','messages','📩');saveDB();renderMessageRequests();showToast('Message request deleted')}
+function sendMessageRequest(user,text){db.messageRequests=db.messageRequests||[];db.messageRequests.unshift({id:Date.now(),user,text:text||'Hi 👋',time:Date.now()});saveDB();renderMessageRequests()}
+function renderChats(){
+  renderMessageRequests();
+  const q=(document.getElementById('messageSearch').value||'').toLowerCase();
+  const list=db.chats.filter(c=>c.user.toLowerCase().includes(q)||c.messages.some(m=>m.text.toLowerCase().includes(q)));
+  document.getElementById('chatList').innerHTML=list.length?list.map(c=>{
+    const last=c.messages[c.messages.length-1];
+    return `<div class="chatItem"><div class="mini">${esc(c.user[0])}</div><button onclick="openChat('${c.id}')"><b>${esc(c.user)}</b><div class="muted">${esc(last?.text||'No messages yet')}</div></button><span class="muted">${last?formatTime(last.time):''}</span></div>`
+  }).join(''):'<div class="empty">No conversations found.</div>';
+}
+function openChat(id){currentChatId=id;document.getElementById('chatListView').style.display='none';document.getElementById('chatWindowView').style.display='block';renderChatWindow();setTimeout(()=>document.getElementById('messageInput').focus(),100)}
+function closeChat(){currentChatId=null;document.getElementById('chatWindowView').style.display='none';document.getElementById('chatListView').style.display='block';renderChats()}
+function renderChatWindow(){
+  const c=db.chats.find(x=>x.id===currentChatId);if(!c)return;
+  document.getElementById('chatName').textContent=c.user;document.getElementById('chatAvatar').textContent=c.user[0].toUpperCase();document.getElementById('chatStatus').textContent=db.status?'Active now':'Activity status off';
+  const box=document.getElementById('chatMessages');
+  box.innerHTML=c.messages.map(m=>{
+    const mine=m.from===db.profile.name;
+    let body='';
+    if(m.type==='media' && m.media){body=m.media.startsWith('data:video')?`<video class="messageMedia" controls playsinline src="${m.media}"></video>`:`<img class="messageMedia" src="${m.media}">`;}
+    else if(m.type==='voice' && m.media){body=`<div class="voiceMsg">🎤 <audio controls src="${m.media}"></audio></div>`;}
+    else body=`<div>${esc(m.text||'')}</div>`;
+    const reaction=m.reaction||'';
+    const privateMsg=m.viewMode==='once'||m.viewMode==='twice';
+    if(m.expired){ body=`<div class="privateExpired">🔒 Private message expired</div>`; }
+    let privateBody=body;
+    if(privateMsg && !m.revealed){
+      const left=Math.max(0,m.viewsLeft ?? (m.viewMode==='once'?1:2));
+      privateBody=`<button class="privateMsg" onclick="openPrivateMessage(${m.id})">🔒 ${m.viewMode==='once'?'View once':'View twice'} · ${left} view${left===1?'':'s'} left</button>`;
+    }
+    return `<div class="bubbleRow ${mine?'mine':''}"><div class="bubble">${privateBody}<div class="reactionRow"><button class="reactionBtn" onclick="reactToMessage(${m.id})">${reaction||'♡'}</button>${reaction?'<span class="reactionCount">1</span>':''}</div><div class="bubbleMeta">${formatTime(m.time)} ${privateMsg?`<span>🔐 ${m.viewMode==='once'?'view once':'view twice'}</span>`:''} ${mine&&!m.type?`<button class="bubbleMenu" onclick="editMessage(${m.id})">Edit</button>`:''}${mine?`<button class="bubbleMenu" onclick="deleteMessage(${m.id})">Delete</button>`:''}</div></div></div>`;
+  }).join('') || '<div class="empty">Start the conversation 💬</div>';
+  box.scrollTop=box.scrollHeight;
+}
+function formatTime(t){return new Date(t).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+function sendMessage(){
+  const input=document.getElementById('messageInput'),text=input.value.trim();if(!text||!currentChatId)return;
+  const c=db.chats.find(x=>x.id===currentChatId);if(!c)return;
+  if(editingMessageId){const m=c.messages.find(x=>x.id===editingMessageId);if(m&&m.from===db.profile.name)m.text=text;editingMessageId=null;showToast('Message edited ✏️')}
+  else{
+    const mode=document.getElementById('messageViewMode')?.value||'normal';
+    c.messages.push({id:Date.now(),from:db.profile.name,text,time:Date.now(),type:'text',viewMode:mode,viewsLeft:mode==='once'?1:mode==='twice'?2:null,revealed:false});
+    if(c.user!==db.profile.name)addNotification('message',db.profile.name,'sent you a message','messages','💌');
+    if(new RegExp('@'+db.profile.username+'\\b','i').test(text))addNotification('mention',db.profile.name,'mentioned you in a message','messages','@');
+    showToast(mode==='once'?'View-once message sent 🔐':mode==='twice'?'View-twice message sent 🔐':'Message sent 💬');
+  }
+  input.value='';if(document.getElementById('messageViewMode'))document.getElementById('messageViewMode').value='normal';saveDB();renderChatWindow();
+}
+
+function openPrivateMessage(id){
+  const c=db.chats.find(x=>x.id===currentChatId),m=c?.messages.find(x=>x.id===id);
+  if(!m||!m.viewMode)return;
+  const left=m.viewsLeft ?? (m.viewMode==='once'?1:2);
+  if(left<=0){showToast('This private message has expired 🔒');return;}
+  m.revealed=true;
+  m.viewsLeft=left-1;
+  saveDB();
+  renderChatWindow();
+  if(m.viewsLeft<=0){
+    setTimeout(()=>{
+      const cc=db.chats.find(x=>x.id===currentChatId);
+      const mm=cc?.messages.find(x=>x.id===id);
+      if(mm){mm.expired=true;mm.revealed=false;saveDB();renderChatWindow();showToast('Private message expired 🔒');}
+    },3500);
+  }else{
+    setTimeout(()=>{
+      const cc=db.chats.find(x=>x.id===currentChatId);
+      const mm=cc?.messages.find(x=>x.id===id);
+      if(mm&&!mm.expired){mm.revealed=false;saveDB();renderChatWindow();}
+    },3500);
+  }
+}
+function editMessage(id){const c=db.chats.find(x=>x.id===currentChatId),m=c?.messages.find(x=>x.id===id);if(!m||m.from!==db.profile.name||m.type==='media'||m.type==='voice')return;editingMessageId=id;document.getElementById('messageInput').value=m.text;document.getElementById('messageInput').focus();showToast('Edit the message and press Send')}
+function deleteMessage(id){const c=db.chats.find(x=>x.id===currentChatId);if(!c)return;c.messages=c.messages.filter(m=>m.id!==id);saveDB();renderChatWindow();showToast('Message deleted 🗑️')}
+function reactToMessage(id){const c=db.chats.find(x=>x.id===currentChatId),m=c?.messages.find(x=>x.id===id);if(!m)return;m.reaction=m.reaction?'':'❤️';saveDB();renderChatWindow()}
+function sendChatMedia(input){const f=input.files&&input.files[0];if(!f||!currentChatId)return;readFile(f).then(media=>{if(!media)return;const c=db.chats.find(x=>x.id===currentChatId);if(!c)return;c.messages.push({id:Date.now(),from:db.profile.name,text:'',media,type:'media',time:Date.now()});saveDB();renderChatWindow();showToast(f.type.startsWith('video')?'Video sent 🎬':'Photo sent 📷');input.value=''})}
+let voiceRecorder=null,voiceChunks=[];
+async function toggleVoiceRecording(){
+  const btn=document.getElementById('voiceBtn');
+  if(voiceRecorder&&voiceRecorder.state==='recording'){voiceRecorder.stop();btn.textContent='🎤';btn.style.background='#eee';showToast('Finishing voice message…');return}
+  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){showToast('Voice recording is not available here');return}
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    voiceChunks=[];voiceRecorder=new MediaRecorder(stream);
+    voiceRecorder.ondataavailable=e=>{if(e.data.size)voiceChunks.push(e.data)};
+    voiceRecorder.onstop=()=>{const blob=new Blob(voiceChunks,{type:voiceRecorder.mimeType||'audio/webm'});stream.getTracks().forEach(t=>t.stop());const reader=new FileReader();reader.onload=()=>{const c=db.chats.find(x=>x.id===currentChatId);if(!c)return;c.messages.push({id:Date.now(),from:db.profile.name,text:'',media:reader.result,type:'voice',time:Date.now()});saveDB();renderChatWindow();showToast('Voice message sent 🎤')};reader.readAsDataURL(blob)};
+    voiceRecorder.start();btn.textContent='⏹️';btn.style.background='#e31b23';showToast('Recording… tap again to stop');
+  }catch(e){showToast('Microphone permission was not granted')}
+}
+function showToast(t){const x=document.getElementById('toast');x.textContent=t;x.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>x.style.display='none',1900)}
+
+window.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&window.instagramCloud?.userId){window.instagramCloud.save(true)}});
+window.addEventListener('pagehide',()=>{if(window.instagramCloud?.userId){window.instagramCloud.save(true)}});
+if(window.supabaseClient){window.supabaseClient.auth.onAuthStateChange((_event,session)=>{if(session){setTimeout(()=>window.instagramCloud.load(),0)}})}
+applyTheme();renderFeed();renderReels();updateNotificationBadge();setTimeout(()=>syncCurrentUserFromSupabase(),50);
+</script>
+
+<!-- Supabase Login / Sign Up -->
+<div id="supabaseLoginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:10000;align-items:center;justify-content:center;padding:20px">
+ <div style="background:#fff;border-radius:22px;padding:24px;max-width:420px;width:100%;box-sizing:border-box">
+  <h2 style="margin:0 0 6px">Instagram Pro Login</h2>
+  <p style="color:#666;margin:0 0 18px">Sign in with your Supabase account.</p>
+  <input id="supabaseLoginEmail" type="email" placeholder="Email" autocomplete="email" style="width:100%;box-sizing:border-box;padding:13px;margin:6px 0;border:1px solid #ddd;border-radius:12px">
+  <input id="supabaseLoginPassword" type="password" placeholder="Password" autocomplete="current-password" style="width:100%;box-sizing:border-box;padding:13px;margin:6px 0;border:1px solid #ddd;border-radius:12px">
+  <input id="supabaseLoginUsername" type="text" placeholder="Username (only for new account)" autocomplete="username" style="width:100%;box-sizing:border-box;padding:13px;margin:6px 0;border:1px solid #ddd;border-radius:12px">
+  <div style="display:flex;gap:10px;margin-top:12px">
+   <button onclick="supabaseLogin(false)" style="flex:1;padding:13px;border:0;border-radius:12px;background:#0095f6;color:#fff;font-weight:700">Log in</button>
+   <button onclick="supabaseLogin(true)" style="flex:1;padding:13px;border:0;border-radius:12px;background:#eee;font-weight:700">Create account</button>
+  </div>
+  <button onclick="closeSupabaseLogin()" style="width:100%;margin-top:10px;padding:10px;border:0;background:none">Cancel</button>
+  <p id="supabaseLoginStatus" style="font-size:13px;color:#666;min-height:18px"></p>
+ </div>
+</div>
+<script>
+function openSupabaseLogin(){const m=document.getElementById('supabaseLoginModal');if(m)m.style.display='flex'}
+function closeSupabaseLogin(){const m=document.getElementById('supabaseLoginModal');if(m)m.style.display='none'}
+async function supabaseLogin(createAccount){
+ const email=document.getElementById('supabaseLoginEmail').value.trim();
+ const password=document.getElementById('supabaseLoginPassword').value;
+ const username=document.getElementById('supabaseLoginUsername').value.trim();
+ const status=document.getElementById('supabaseLoginStatus');
+ if(!email||!password){status.textContent='Enter your email and password.';return}
+ if(createAccount && !username){status.textContent='Enter a username for the new account.';return}
+ status.textContent='Connecting to Supabase…';
+ try{
+  const result=createAccount ? await signUpOnline(email,password,username,username) : await signInOnline(email,password);
+  if(result.error) throw result.error;
+  if(createAccount && !result.data?.session){status.textContent='Account created. Check your email to confirm it, then log in.';return}
+  if(createAccount&&result.data?.session){
+    db.profile.name=username||db.profile.name;db.profile.username=username||db.profile.username;
+    await upsertCloudProfile();
+  }
+  status.textContent=createAccount?'Account created and signed in!':'Logged in successfully!';
+  await window.instagramCloud.load();
+  setTimeout(closeSupabaseLogin,800);
+ }catch(e){status.textContent=e?.message||'Login failed. Check your email and password.'}
+}
+</script>
+
+<!-- Meta Login integration scaffold -->
+<div id="metaLoginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;padding:20px">
+ <div style="background:#fff;border-radius:22px;padding:28px;max-width:420px;width:100%;text-align:center">
+  <div style="font-size:42px">🔵</div><h2>Continue with Meta</h2>
+  <p style="color:#666">Connect your Meta account securely. The button below is a setup placeholder until your Meta app ID and hosted redirect URL are configured.</p>
+  <button onclick="startMetaLogin()" style="width:100%;padding:14px;border:0;border-radius:12px;background:#1877f2;color:#fff;font-weight:700">Continue with Meta</button>
+  <button onclick="closeMetaLogin()" style="margin-top:10px;border:0;background:none;padding:10px">Cancel</button>
+  <p id="metaLoginStatus" style="font-size:13px;color:#777"></p>
+ </div>
+</div>
+<script>
+const META_CONFIG={
+ appId:'YOUR_META_APP_ID',
+ redirectUri:'https://YOUR-DOMAIN.example.com/auth/meta/callback',
+ version:'vXX.X',
+ scopes:[]
+};
+function openMetaLogin(){const m=document.getElementById('metaLoginModal');if(m)m.style.display='flex'}
+function closeMetaLogin(){const m=document.getElementById('metaLoginModal');if(m)m.style.display='none'}
+function startMetaLogin(){
+ const st=document.getElementById('metaLoginStatus');
+ if(META_CONFIG.appId==='YOUR_META_APP_ID'||META_CONFIG.redirectUri.includes('YOUR-DOMAIN')){
+  st.textContent='Setup needed: create a Meta app, add the correct login product, configure the exact HTTPS redirect URL, then replace the placeholders in META_CONFIG.';
+  return;
+ }
+ const params=new URLSearchParams({client_id:META_CONFIG.appId,redirect_uri:META_CONFIG.redirectUri,response_type:'code',scope:META_CONFIG.scopes.join(',')});
+ window.location.href='https://www.facebook.com/dialog/oauth?'+params.toString();
+}
+function metaLoginCallback(code){
+ // Never exchange the authorization code or store an app secret in this HTML.
+ // Your server should exchange the code securely, validate state/redirect URI,
+ // then create the Instagram Pro session.
+ console.log('Meta authorization code received. Send it to your secure backend.',code);
+}
+</script>
+</body>
+</html>
