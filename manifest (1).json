@@ -1,0 +1,18 @@
+{
+  "background_color": "#ffffff",
+  "dir": "auto",
+  "display": "standalone",
+  "name": "samueltench.github",
+  "orientation": "portrait",
+  "scope": "/Instagram-pro/",
+  "short_name": "samueltench.github",
+  "start_url": "/Instagram-pro/",
+  "theme_color": "#ffffff",
+  "id": "/Instagram-pro/",
+  "description": "Instagram Pro is a social media app for sharing photos, videos, stories, and reels, chatting with friends, and connecting with people.",
+  "lang": "en",
+  "categories": [
+    "entertainment",
+    "social"
+  ]
+}
